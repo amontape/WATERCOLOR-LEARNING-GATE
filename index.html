@@ -1,0 +1,3015 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Imprima&family=Viaoda+Libre&display=swap" rel="stylesheet">
+  <title>Cinematic Learning Template</title>
+  <style>
+    :root {
+      --black: oklch(0.08 0.008 248);
+      --white: oklch(0.99 0.002 248);
+      --ink: oklch(0.14 0.012 248);
+      --muted: oklch(0.63 0.02 248);
+      --glass: rgba(255, 255, 255, .045);
+      --glass-strong: rgba(255, 255, 255, .09);
+      --line: rgba(255, 255, 255, .18);
+      --blue: oklch(0.62 0.2 250);
+      --coral: oklch(0.66 0.21 28);
+      --mint: oklch(0.78 0.15 178);
+      --yellow: oklch(0.86 0.16 92);
+      --ease: cubic-bezier(.16, 1, .3, 1);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--black);
+      scrollbar-gutter: stable;
+    }
+
+    body {
+      margin: 0;
+      color: var(--white);
+      background: var(--black);
+      font-family: "Noto Sans Thai", system-ui, sans-serif;
+      line-height: 1.65;
+      overflow-x: hidden;
+      font-feature-settings: "liga" 1, "kern" 1;
+    }
+
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      background: var(--black);
+    }
+
+    .page-bg video {
+      position: absolute;
+      inset: -3%;
+      width: 106%;
+      height: 106%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0;
+      transform: scale(1.02);
+      filter: saturate(1.1) contrast(1.06);
+      transition: opacity 900ms var(--ease), transform 1400ms var(--ease), filter 900ms var(--ease);
+    }
+
+    .page-bg video.is-active {
+      opacity: .94;
+      transform: scale(1);
+    }
+
+    .page-bg::before,
+    .page-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .page-bg::before {
+      background:
+        radial-gradient(circle at 20% 18%, rgba(92, 156, 255, .16), transparent 30%),
+        radial-gradient(circle at 84% 70%, rgba(255, 96, 76, .16), transparent 34%),
+        linear-gradient(180deg, rgba(5,6,9,.18), rgba(5,6,9,.68));
+    }
+
+    .page-bg::after {
+      background: linear-gradient(90deg, rgba(5,6,9,.54), rgba(5,6,9,.1) 44%, rgba(5,6,9,.52));
+      mix-blend-mode: multiply;
+    }
+
+    ::selection {
+      color: var(--black);
+      background: var(--yellow);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .display {
+      font-family: "Bricolage Grotesque", "Noto Sans Thai", system-ui, sans-serif;
+      letter-spacing: -0.035em;
+      line-height: .95;
+      text-wrap: balance;
+    }
+
+    .liquid-glass {
+      position: relative;
+      overflow: hidden;
+      background: var(--glass);
+      background-blend-mode: luminosity;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, .16);
+    }
+
+    .liquid-glass::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      padding: 1px;
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(255,255,255,.48), rgba(255,255,255,.1) 32%, transparent 50%, rgba(255,255,255,.2));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .nav {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 30;
+      padding: 20px clamp(16px, 4vw, 42px);
+    }
+
+    .nav-shell {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+      min-height: 58px;
+      border-radius: 999px;
+      padding: 10px 12px 10px 22px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      font: 800 21px/1 "Bricolage Grotesque", sans-serif;
+      text-decoration: none;
+      letter-spacing: -0.04em;
+    }
+
+    .logo sup {
+      font-size: 10px;
+      color: rgba(255,255,255,.62);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: rgba(255,255,255,.72);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a,
+    .nav-cta,
+    .button,
+    .icon-button {
+      text-decoration: none;
+      transition: transform .24s var(--ease), opacity .24s var(--ease), background .24s var(--ease);
+    }
+
+    .nav-links a:hover,
+    .nav-cta:hover,
+    .button:hover,
+    .icon-button:hover {
+      transform: translateY(-1px);
+      opacity: .78;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      max-width: min(320px, 42vw);
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 8px 18px 8px 12px;
+      color: var(--black);
+      background: var(--white);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .nav-cta-mark {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      opacity: .7;
+      filter: brightness(0) contrast(1.08);
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      order: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      padding: 120px 24px 80px;
+      isolation: isolate;
+    }
+
+    .hero-video {
+      display: none;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      z-index: -2;
+      background:
+        radial-gradient(circle at 72% 28%, rgba(0, 120, 255, .28), transparent 28%),
+        radial-gradient(circle at 20% 78%, rgba(255, 97, 80, .26), transparent 34%),
+        linear-gradient(180deg, rgba(7,9,14,.2), rgba(7,9,14,.82) 78%, var(--black));
+    }
+
+    .hero::after {
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(9,10,14,.72), transparent 34%, rgba(9,10,14,.86));
+    }
+
+    .hero-inner {
+      width: min(100%, var(--max));
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(34px, 7vw, 86px);
+      align-items: end;
+    }
+
+    .hero-title {
+      margin: 0;
+      max-width: 880px;
+      font-size: clamp(56px, 10vw, 112px);
+      font-weight: 800;
+    }
+
+    .hero-title em {
+      color: rgba(255,255,255,.56);
+      font-style: normal;
+    }
+
+    .type-cursor {
+      display: inline-block;
+      width: 3px;
+      height: .84em;
+      margin-left: 6px;
+      background: currentColor;
+      vertical-align: -0.08em;
+      animation: blink 1s step-end infinite;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 16px;
+    }
+
+    .empty-panel {
+      border-radius: 8px;
+      padding: 22px;
+      color: rgba(255,255,255,.75);
+    }
+
+    .empty-label {
+      display: block;
+      margin-bottom: 10px;
+      color: rgba(215, 232, 255, .56);
+      font-family: "Bricolage Grotesque", "Noto Sans Thai", system-ui, sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .empty-line {
+      display: block;
+      height: 11px;
+      margin: 10px 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+    }
+
+    .empty-line.short {
+      width: 58%;
+    }
+
+    .hero-actions,
+    .social-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      border-radius: 999px;
+      padding: 13px 22px;
+      border: 1px solid rgba(255,255,255,.14);
+      font-family: "Noto Sans Thai", system-ui, sans-serif;
+      font-weight: 800;
+      letter-spacing: -.01em;
+      background: var(--white);
+      color: var(--black);
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,.14);
+    }
+
+    .button.ghost {
+      color: var(--white);
+      background: rgba(255,255,255,.075);
+    }
+
+    .button:disabled,
+    .mix-color-choice:disabled {
+      cursor: not-allowed;
+      opacity: .48;
+      transform: none;
+    }
+
+    .mix-hero-card {
+      display: grid;
+      gap: 18px;
+      border-radius: 14px;
+      padding: clamp(18px, 3vw, 28px);
+      border: 1px solid rgba(225, 238, 255, .16);
+      background:
+        radial-gradient(circle at 16% 0%, rgba(132, 186, 255, .18), transparent 34%),
+        radial-gradient(circle at 90% 92%, rgba(255, 210, 122, .1), transparent 36%),
+        rgba(255,255,255,.052);
+    }
+
+    .mix-game-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(96px, .72fr) minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .mix-team,
+    .mix-round {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      padding: 12px;
+      background: rgba(255,255,255,.055);
+      color: rgba(222, 236, 255, .68);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .mix-round {
+      text-align: center;
+    }
+
+    .mix-team.is-active {
+      border-color: rgba(174, 215, 255, .72);
+      background:
+        linear-gradient(135deg, rgba(143, 191, 255, .22), rgba(255,255,255,.055));
+    }
+
+    .mix-team strong,
+    .mix-round strong {
+      display: block;
+      color: #fff;
+      font-family: "Bricolage Grotesque", "Noto Sans Thai", system-ui, sans-serif;
+      font-size: clamp(24px, 3vw, 36px);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-top: 6px;
+    }
+
+    .mix-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .mix-swatch {
+      min-height: 132px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.2);
+      background:
+        radial-gradient(circle at 25% 18%, rgba(255,255,255,.34), transparent 19%),
+        linear-gradient(135deg, rgba(255,255,255,.06), rgba(0,0,0,.08)),
+        var(--swatch, #7ca6c6);
+      box-shadow: inset 0 1px 12px rgba(255,255,255,.12);
+    }
+
+    .mix-swatch.target {
+      --swatch: #88a6bb;
+    }
+
+    .mix-swatch.result {
+      --swatch: #8a9f8f;
+      transition: background .3s var(--ease);
+    }
+
+    .mix-swatch.is-hidden {
+      display: grid;
+      place-items: center;
+      color: rgba(221, 235, 255, .82);
+      font-family: "Bricolage Grotesque", "Noto Sans Thai", system-ui, sans-serif;
+      font-weight: 900;
+      letter-spacing: .08em;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.03)),
+        rgba(10, 18, 30, .82);
+    }
+
+    .mix-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: rgba(223, 237, 255, .68);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .mix-label span {
+      color: #fff;
+      font-family: "Bricolage Grotesque", "Noto Sans Thai", system-ui, sans-serif;
+      font-size: 15px;
+      letter-spacing: -.01em;
+    }
+
+    .mix-control {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mix-control label {
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255,255,255,.68);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .mix-control input {
+      width: 100%;
+      accent-color: #c7ddff;
+    }
+
+    .mix-palette {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .mix-color-choice {
+      min-height: 66px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 12px;
+      cursor: pointer;
+      color: var(--choice-text, #fff);
+      background:
+        radial-gradient(circle at 28% 20%, rgba(255,255,255,.34), transparent 22%),
+        var(--choice, #8aa);
+      font-family: "Noto Sans Thai", system-ui, sans-serif;
+      font-weight: 900;
+      letter-spacing: -.02em;
+      box-shadow: inset 0 1px 10px rgba(255,255,255,.14);
+      text-shadow: 0 1px 12px rgba(0,0,0,.32);
+      transition: transform .22s var(--ease), border-color .22s var(--ease), box-shadow .22s var(--ease), filter .22s var(--ease);
+    }
+
+    .mix-color-choice:hover {
+      transform: translateY(-2px);
+      filter: saturate(1.08) brightness(1.04);
+    }
+
+    .mix-color-choice.is-selected {
+      border-color: rgba(255, 239, 166, .95);
+      box-shadow: 0 0 0 2px rgba(255, 239, 166, .18), 0 0 28px rgba(255, 239, 166, .2);
+      transform: translateY(-2px);
+    }
+
+    .mix-sliders {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mix-slider-row {
+      display: grid;
+      grid-template-columns: 78px 1fr 42px;
+      gap: 10px;
+      align-items: center;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.055);
+      color: rgba(226, 239, 255, .78);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .mix-slider-row input {
+      accent-color: #c7ddff;
+    }
+
+    .mix-slider-row strong {
+      color: #fff;
+      font-family: "Bricolage Grotesque", "Noto Sans Thai", system-ui, sans-serif;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .mix-result-panel {
+      display: grid;
+      gap: 8px;
+      min-height: 78px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.028));
+      color: rgba(226, 239, 255, .88);
+      font-size: 14px;
+      font-weight: 650;
+      line-height: 1.65;
+    }
+
+    .mix-meter {
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,.11);
+    }
+
+    .mix-meter span {
+      display: block;
+      width: var(--score, 0%);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #e75c7c, #ffe48a, #87f2c3);
+      transition: width .7s var(--ease);
+    }
+
+    .mix-score {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .mix-score div {
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.68);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .mix-score strong {
+      display: block;
+      color: #fff;
+      font-size: 24px;
+      line-height: 1;
+      margin-top: 4px;
+    }
+
+    .mix-status {
+      margin: 0;
+      color: rgba(219, 236, 255, .76);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .game-section-mount {
+      display: grid;
+      min-height: 480px;
+      align-items: center;
+    }
+
+    .game-section-mount .hero-side {
+      width: min(100%, 680px);
+      margin-inline: auto;
+    }
+
+    .game-section-mount .mix-hero-card {
+      background: rgba(255,255,255,.055);
+    }
+
+    .mix-memory-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(3, 6, 12, .84);
+      backdrop-filter: blur(18px);
+      transition: opacity .28s var(--ease);
+    }
+
+    .mix-memory-modal.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mix-memory-card {
+      width: min(720px, 94vw);
+      display: grid;
+      gap: 18px;
+      padding: clamp(20px, 4vw, 34px);
+      border-radius: 16px;
+      border: 1px solid rgba(225, 238, 255, .18);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(129, 186, 255, .18), transparent 34%),
+        linear-gradient(145deg, rgba(17, 27, 43, .92), rgba(7, 8, 13, .96));
+    }
+
+    .mix-memory-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .mix-timer {
+      display: grid;
+      place-items: center;
+      width: 74px;
+      height: 74px;
+      border-radius: 14px;
+      background: #fff;
+      color: #05070b;
+      font-family: "Bricolage Grotesque", "Noto Sans Thai", system-ui, sans-serif;
+      font-size: 36px;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mix-memory-target {
+      min-height: min(44vh, 360px);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,.32), transparent 24%),
+        var(--memory-swatch, #9bb4c8);
+    }
+
+    .mix-winner-toast {
+      position: fixed;
+      inset: auto 24px 24px auto;
+      z-index: 90;
+      width: min(420px, calc(100vw - 48px));
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(8, 12, 20, .9);
+      color: #fff;
+      backdrop-filter: blur(18px);
+      transform: translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .32s var(--ease), opacity .32s var(--ease);
+    }
+
+    .mix-winner-toast.is-open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mix-confetti {
+      position: fixed;
+      top: -20px;
+      width: 8px;
+      height: 14px;
+      z-index: 95;
+      border-radius: 3px;
+      background: var(--confetti, #c7ddff);
+      pointer-events: none;
+      animation: mixConfettiFall 1.4s linear forwards;
+    }
+
+    @keyframes mixConfettiFall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    .icon-button {
+      display: inline-grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      color: rgba(255,255,255,.8);
+    }
+
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: clamp(80px, 12vw, 160px) 24px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(7, 8, 12, .16), rgba(7, 8, 12, .42));
+    }
+
+    .section-inner {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(250px, .42fr);
+      gap: clamp(26px, 6vw, 74px);
+      align-items: end;
+      margin-bottom: clamp(34px, 7vw, 86px);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(42px, 6.6vw, 86px);
+      font-weight: 800;
+      letter-spacing: -0.032em;
+    }
+
+    .section-note {
+      margin: 0;
+      color: rgba(224, 237, 255, .64);
+      font-size: clamp(16px, 1.6vw, 20px);
+      line-height: 1.8;
+    }
+
+    .video-feature {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      aspect-ratio: 16 / 9;
+      background: rgba(255,255,255,.07);
+    }
+
+    .video-feature video,
+    .video-feature iframe,
+    .split-media video,
+    .tile video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: 0;
+      filter: saturate(1.08) contrast(1.03);
+    }
+
+    .video-caption {
+      position: absolute;
+      inset: auto 18px 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+    }
+
+    .video-caption .empty-panel {
+      max-width: 430px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .art-gallery {
+      position: relative;
+      display: grid;
+      gap: 20px;
+    }
+
+    .art-track {
+      position: relative;
+      min-height: clamp(560px, 62vw, 720px);
+      overflow: visible;
+      perspective: 1200px;
+    }
+
+    .art-card {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: min(680px, 82vw);
+      border-radius: 8px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.14);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%) scale(.86);
+      transition: transform .62s var(--ease), opacity .62s var(--ease), filter .62s var(--ease);
+      will-change: transform, opacity, filter;
+    }
+
+    .art-card.is-active {
+      z-index: 5;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) scale(1) rotateY(0deg);
+      filter: none;
+    }
+
+    .art-card.is-next {
+      z-index: 4;
+      opacity: .46;
+      transform: translateX(calc(-50% + clamp(54px, 8vw, 128px))) translateY(16px) scale(.92) rotateY(-4deg);
+      filter: blur(.4px) saturate(.88);
+    }
+
+    .art-card.is-next-2 {
+      z-index: 3;
+      opacity: .22;
+      transform: translateX(calc(-50% + clamp(100px, 15vw, 220px))) translateY(34px) scale(.84) rotateY(-8deg);
+      filter: blur(1.8px) saturate(.72);
+    }
+
+    .art-card.is-prev {
+      z-index: 2;
+      opacity: .14;
+      transform: translateX(calc(-50% - clamp(70px, 10vw, 160px))) translateY(38px) scale(.82) rotateY(7deg);
+      filter: blur(2px) saturate(.68);
+    }
+
+    .art-frame {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border: 0;
+      border-radius: 8px 8px 0 0;
+      padding: 0;
+      color: inherit;
+      background: rgba(255,255,255,.05);
+      cursor: pointer;
+    }
+
+    .art-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(.94) contrast(1.03);
+      transform: scale(1.01);
+      transition: transform .7s var(--ease), filter .7s var(--ease);
+    }
+
+    .art-frame:hover img,
+    .art-frame:focus-visible img {
+      transform: scale(1.055);
+      filter: saturate(1.03) contrast(1.05);
+    }
+
+    .art-frame::after {
+      content: "View detail";
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #07111d;
+      background: rgba(232, 244, 255, .92);
+      font-size: 12px;
+      font-weight: 900;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .28s var(--ease), transform .28s var(--ease);
+    }
+
+    .art-frame:hover::after,
+    .art-frame:focus-visible::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .art-body {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+    }
+
+    .art-title {
+      margin: 0;
+      color: #fff;
+      font-size: 20px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .art-meta {
+      margin: 0;
+      color: rgba(255,255,255,.58);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .art-note {
+      margin: 0;
+      color: rgba(255,255,255,.74);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .art-controls {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      position: relative;
+      z-index: 7;
+    }
+
+    .art-control {
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      color: #07111d;
+      background: rgba(232,244,255,.92);
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .24s var(--ease), opacity .24s var(--ease);
+    }
+
+    .art-control:hover {
+      transform: translateY(-1px);
+      opacity: .82;
+    }
+
+    .guess-activity {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .guess-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 20px 22px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .guess-head h3 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .guess-head p {
+      max-width: 520px;
+      margin: 0;
+      color: rgba(255,255,255,.66);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .guess-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .guess-card {
+      border-radius: 8px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    .guess-image {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      border-radius: 8px 8px 0 0;
+      background: rgba(255,255,255,.05);
+      cursor: zoom-in;
+    }
+
+    .guess-image img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(.96) contrast(1.04);
+      transition: transform .7s var(--ease), filter .7s var(--ease);
+    }
+
+    .guess-image:hover img {
+      transform: scale(1.05);
+      filter: saturate(1.04) contrast(1.05);
+    }
+
+    .guess-image::after {
+      content: "Zoom";
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #07111d;
+      background: rgba(232,244,255,.92);
+      font-size: 12px;
+      font-weight: 900;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .28s var(--ease), transform .28s var(--ease);
+    }
+
+    .guess-image:hover::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .guess-body {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .guess-question {
+      margin: 0;
+      color: rgba(255,255,255,.82);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .guess-answer {
+      display: none;
+      margin: 0;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.76);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .guess-card.is-revealed .guess-answer {
+      display: block;
+      animation: dialogIn .28s var(--ease) both;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(0, 1fr);
+      gap: clamp(26px, 6vw, 70px);
+      align-items: center;
+    }
+
+    .split-media {
+      overflow: hidden;
+      border-radius: 8px;
+      aspect-ratio: 4 / 3;
+      background: rgba(255,255,255,.08);
+    }
+
+    .stack {
+      display: grid;
+      gap: 22px;
+    }
+
+    .rule {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,.12);
+    }
+
+    .old-template-section {
+      display: none;
+    }
+
+    .lesson-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      color: rgba(255,255,255,.52);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .lesson-kicker::before {
+      content: "";
+      width: 32px;
+      height: 1px;
+      background: rgba(255,255,255,.32);
+    }
+
+    .lesson-title-en {
+      display: block;
+      margin-top: 8px;
+      color: rgba(209, 225, 248, .58);
+      font-size: clamp(22px, 3.5vw, 42px);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+    }
+
+    .lesson-copy {
+      margin: 0;
+      color: rgba(232, 240, 252, .78);
+      font-size: clamp(16px, 1.45vw, 19px);
+      line-height: 1.85;
+      text-wrap: pretty;
+    }
+
+    .lesson-copy + .lesson-copy {
+      margin-top: 16px;
+    }
+
+    .term-list,
+    .lesson-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: rgba(255,255,255,.72);
+    }
+
+    .term-list li,
+    .lesson-list li {
+      padding: 12px 0;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+
+    .term-list strong,
+    .lesson-list strong {
+      color: #fff;
+    }
+
+    .content-card {
+      min-height: 100%;
+    }
+
+    .popup-link {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--black);
+      background: rgba(255,255,255,.92);
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .24s var(--ease), opacity .24s var(--ease);
+    }
+
+    .popup-link:hover {
+      transform: translateY(-1px);
+      opacity: .82;
+    }
+
+    .lesson-dialog {
+      width: min(720px, calc(100vw - 32px));
+      border: 0;
+      border-radius: 10px;
+      padding: 0;
+      color: #fff;
+      background: rgba(8, 13, 20, .88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 34px 120px rgba(0,0,0,.48);
+    }
+
+    .lesson-dialog::backdrop {
+      background: rgba(0,0,0,.58);
+      backdrop-filter: blur(3px);
+    }
+
+    .lesson-dialog[open] {
+      animation: dialogIn .34s var(--ease) both;
+    }
+
+    .dialog-inner {
+      padding: clamp(22px, 4vw, 38px);
+    }
+
+    .dialog-title {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 5vw, 52px);
+    }
+
+    .dialog-body {
+      color: rgba(255,255,255,.78);
+      line-height: 1.8;
+    }
+
+    .dialog-figure {
+      margin: 0 0 18px;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.04);
+    }
+
+    .dialog-figure img {
+      display: block;
+      width: 100%;
+      max-height: 72vh;
+      object-fit: contain;
+      filter: saturate(.96) contrast(1.04);
+    }
+
+    .dialog-figure figcaption {
+      padding: 10px 12px;
+      color: rgba(255,255,255,.64);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .dialog-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 999px;
+      color: #08101a;
+      background: rgba(255,255,255,.92);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    @keyframes dialogIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .tile {
+      overflow: hidden;
+      border-radius: 8px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .tile[data-popup] {
+      cursor: pointer;
+      transition: transform .24s var(--ease), background .24s var(--ease), border-color .24s var(--ease);
+    }
+
+    .tile[data-popup]:hover,
+    .tile[data-popup]:focus-visible {
+      transform: translateY(-3px);
+      background: rgba(255,255,255,.075);
+      outline: 1px solid rgba(207, 229, 255, .42);
+      outline-offset: 2px;
+    }
+
+    .tile-media {
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+    }
+
+    .tile-body {
+      padding: 22px;
+    }
+
+    .activity-band {
+      display: grid;
+      grid-template-columns: minmax(0, .7fr) minmax(280px, .3fr);
+      gap: 18px;
+      min-height: 380px;
+    }
+
+    .activity-stage {
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.14), transparent 32%),
+        linear-gradient(135deg, rgba(0,123,255,.25), rgba(255,97,80,.2));
+      color: rgba(255,255,255,.72);
+      text-align: center;
+      padding: 34px;
+    }
+
+    .activity-stage strong {
+      display: block;
+      color: #fff;
+      font-size: clamp(30px, 5vw, 64px);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .color-logic-board {
+      display: grid;
+      grid-template-columns: minmax(150px, .9fr) minmax(120px, .7fr);
+      gap: clamp(18px, 3vw, 30px);
+      width: 100%;
+      align-items: center;
+      text-align: left;
+    }
+
+    .color-wheel {
+      position: relative;
+      width: min(220px, 42vw);
+      aspect-ratio: 1;
+      margin: 0 auto;
+      border-radius: 999px;
+      background:
+        conic-gradient(from -20deg, #e74a55, #f08a3c, #f3d35e, #4fb56f, #3d9fc4, #4b68d6, #8b55c7, #e74a55);
+      box-shadow: inset 0 0 0 14px rgba(255,255,255,.12), 0 22px 70px rgba(0,0,0,.28);
+    }
+
+    .color-wheel::after {
+      content: "";
+      position: absolute;
+      inset: 33%;
+      border-radius: inherit;
+      background: rgba(9, 18, 31, .86);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+    }
+
+    .value-scale {
+      display: grid;
+      gap: 12px;
+    }
+
+    .value-ramp {
+      height: 26px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #111822, #45617f, #8ea8c5, #eef6ff);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+    }
+
+    .value-chip-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+    }
+
+    .value-chip-row span {
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: var(--chip);
+    }
+
+    .logic-label {
+      margin: 0;
+      color: rgba(255,255,255,.72);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .footer-cta {
+      position: relative;
+      z-index: 1;
+      min-height: 70vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,210,65,.18), transparent 36%),
+        var(--black);
+    }
+
+    .footer-cta .section-title {
+      max-width: 920px;
+      margin: 0 auto 30px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(10px);
+      transition: opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease);
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .portal-journey {
+      position: relative;
+      z-index: 2;
+      order: -1;
+      height: 480vh;
+      background: #03070d;
+      color: #fff;
+      --rx: 0px;
+      --ry: 0px;
+      --world-scale: 1;
+      --portal-scale: 1;
+      --portal-opacity: 1;
+      --logo-opacity: .62;
+      --logo-scale: .68;
+      --curtain-shift: 62;
+      --curtain-scale: 1;
+      --hero-opacity: 1;
+      --cta-opacity: 0;
+      --entry: 0;
+    }
+
+    .portal-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      min-height: 620px;
+      overflow: hidden;
+      isolation: isolate;
+      font-family: "Imprima", "Noto Sans Thai", sans-serif;
+    }
+
+    .portal-world,
+    .portal-frame,
+    .curtain {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    .portal-world {
+      z-index: 1;
+      transform: scale(var(--world-scale)) translate3d(calc(var(--rx) * .86), calc(var(--ry) * .86), 0);
+      filter: hue-rotate(174deg) saturate(.98) contrast(1.12) brightness(.68);
+    }
+
+    .portal-frame {
+      z-index: 3;
+      object-position: 52% 38%;
+      transform-origin: 52% 38%;
+      opacity: var(--portal-opacity);
+      transform: scale(var(--portal-scale)) translate3d(var(--rx), var(--ry), 0);
+      filter: hue-rotate(178deg) saturate(.82) contrast(1.12) brightness(.76);
+    }
+
+    .portal-emblem {
+      position: absolute;
+      z-index: 2;
+      left: 52%;
+      top: 54.5%;
+      width: clamp(112px, 14vw, 230px);
+      height: auto;
+      opacity: var(--logo-opacity);
+      pointer-events: none;
+      transform: translate3d(calc(-50% + var(--rx)), calc(-50% + var(--ry)), 0) scale(var(--logo-scale));
+      transform-origin: 50% 50%;
+      filter:
+        drop-shadow(0 0 26px rgba(214, 229, 255, .18))
+        drop-shadow(0 18px 48px rgba(0, 0, 0, .38));
+      mix-blend-mode: screen;
+      will-change: transform, opacity;
+    }
+
+    .curtain {
+      z-index: 4;
+      transform-origin: center;
+      transition: transform 1100ms var(--ease);
+      filter: hue-rotate(178deg) saturate(.76) contrast(1.12) brightness(.68);
+    }
+
+    .curtain-left {
+      transform: translateX(-62%) translateZ(0);
+    }
+
+    .curtain-right {
+      transform: translateX(62%) translateZ(0);
+    }
+
+    .portal-sticky::before,
+    .portal-sticky::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .portal-sticky::before {
+      background:
+        radial-gradient(circle at 50% 42%, rgba(78, 132, 164, .12), transparent 34%),
+        linear-gradient(180deg, rgba(2, 6, 12, .08), rgba(2, 6, 12, .3) 76%, rgba(2, 6, 12, .68));
+    }
+
+    .portal-sticky::after {
+      background:
+        radial-gradient(circle at 50% 46%, transparent 0 30%, rgba(0, 0, 0, .1) 58%, rgba(0, 0, 0, .36)),
+        linear-gradient(180deg, rgba(3, 7, 13, .06), rgba(3, 7, 13, .5));
+      box-shadow: inset 0 0 104px rgba(0, 0, 0, .66);
+    }
+
+    .portal-nav {
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 50;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 28px;
+      padding: clamp(18px, 3vw, 28px) clamp(20px, 4vw, 48px);
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.9);
+    }
+
+    .portal-nav a {
+      text-decoration: none;
+      opacity: .86;
+      transition: opacity .24s var(--ease);
+    }
+
+    .portal-nav a:hover {
+      opacity: 1;
+    }
+
+    .portal-nav-group {
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 3vw, 34px);
+    }
+
+    .portal-nav-group:last-child {
+      justify-content: flex-end;
+    }
+
+    .portal-star {
+      width: 30px;
+      height: 30px;
+      opacity: .94;
+      filter: drop-shadow(0 8px 24px rgba(255,255,255,.18));
+    }
+
+    .portal-hero-copy,
+    .portal-dots,
+    .portal-cue,
+    .portal-final {
+      position: absolute;
+      z-index: 45;
+      will-change: transform, opacity;
+    }
+
+    .portal-hero-copy {
+      left: clamp(26px, 5vw, 60px);
+      top: 46%;
+      width: min(440px, calc(100vw - 52px));
+      opacity: var(--hero-opacity);
+      transform: translateY(calc(-50% + 20px - var(--entry) * 20px));
+      transition: opacity .9s var(--ease) .3s, transform .9s var(--ease) .3s;
+    }
+
+    .portal-title,
+    .portal-final h2 {
+      margin: 0;
+      font-family: "Viaoda Libre", serif;
+      font-weight: 400;
+      letter-spacing: .035em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 24px rgba(0,0,0,.42);
+    }
+
+    .portal-title {
+      font-size: clamp(44px, 6vw, 92px);
+      line-height: .94;
+    }
+
+    .portal-copy {
+      max-width: 390px;
+      margin: 18px 0 0;
+      color: rgba(255,255,255,.76);
+      font-size: clamp(14px, 1.25vw, 18px);
+      line-height: 1.65;
+    }
+
+    .portal-dots {
+      left: clamp(24px, 5vw, 60px);
+      bottom: 34px;
+      display: flex;
+      gap: 10px;
+      opacity: calc(var(--hero-opacity) * .86);
+    }
+
+    .portal-dots span {
+      width: 14px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.46);
+    }
+
+    .portal-dots span:first-child {
+      width: 28px;
+      background: rgba(255,255,255,.92);
+    }
+
+    .portal-cue {
+      left: 50%;
+      bottom: 30px;
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,.6);
+      opacity: calc(var(--hero-opacity) * .9);
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .portal-cue-icon {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.42);
+      animation: bobUp 1.8s ease-in-out infinite;
+    }
+
+    .portal-final {
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 26px;
+      text-align: center;
+      opacity: var(--cta-opacity);
+      pointer-events: none;
+    }
+
+    .portal-final.is-visible {
+      pointer-events: auto;
+    }
+
+    .portal-final h2 {
+      font-size: clamp(38px, 7vw, 78px);
+      line-height: 1.05;
+    }
+
+    .portal-final p {
+      max-width: 500px;
+      margin: 18px auto 0;
+      color: rgba(255,255,255,.82);
+      font-size: clamp(14px, 1.5vw, 20px);
+    }
+
+    @keyframes bobUp {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero-inner,
+      .section-head,
+      .split,
+      .activity-band {
+        grid-template-columns: 1fr;
+      }
+
+      .portal-sticky {
+        min-height: 680px;
+      }
+
+      .portal-nav {
+        grid-template-columns: 1fr auto 1fr;
+        padding: 18px 20px;
+      }
+
+      .portal-nav-group {
+        gap: 0;
+      }
+
+      .portal-nav-group a:not(:first-child) {
+        display: none;
+      }
+
+      .portal-hero-copy {
+        left: 50%;
+        top: 34%;
+        width: min(360px, calc(100vw - 38px));
+        text-align: center;
+        color: rgba(238, 247, 255, .96);
+        transform: translate(-50%, calc(-50% + 20px - var(--entry) * 20px));
+      }
+
+      .portal-emblem {
+        top: 55.5%;
+        width: clamp(110px, 34vw, 190px);
+      }
+
+      .portal-copy {
+        margin-inline: auto;
+        max-width: 280px;
+        color: rgba(226, 239, 255, .76);
+      }
+
+      .art-track {
+        min-height: 560px;
+      }
+
+      .art-card {
+        width: min(500px, 86vw);
+      }
+
+      .art-card.is-next {
+        transform: translateX(calc(-50% + 42px)) translateY(16px) scale(.91);
+      }
+
+      .art-card.is-next-2,
+      .art-card.is-prev {
+        opacity: .12;
+        transform: translateX(calc(-50% + 72px)) translateY(32px) scale(.84);
+      }
+
+      .portal-dots {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 26px;
+      }
+
+      .portal-cue {
+        display: none;
+      }
+
+      .hero {
+        align-items: end;
+        padding-top: 104px;
+      }
+
+      .hero-side {
+        max-width: 520px;
+      }
+
+      .video-caption {
+        position: static;
+        padding: 14px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .nav {
+        padding: 14px;
+      }
+
+      .nav-shell {
+        padding-left: 16px;
+      }
+
+      .nav-cta {
+        min-height: 38px;
+        max-width: 58vw;
+        padding: 8px 12px 8px 9px;
+        font-size: 12px;
+      }
+
+      .nav-cta-mark {
+        width: 21px;
+        height: 21px;
+      }
+
+      .mix-game-head,
+      .mix-board {
+        grid-template-columns: 1fr;
+      }
+
+      .mix-palette {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mix-slider-row {
+        grid-template-columns: 64px 1fr 36px;
+      }
+
+      .mix-color-choice {
+        min-height: 56px;
+      }
+
+      .mix-memory-top {
+        align-items: start;
+      }
+
+      .mix-timer {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+      }
+
+      .hero-title {
+        font-size: clamp(48px, 16vw, 78px);
+      }
+
+      .section {
+        padding-inline: 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .reveal,
+      .nav-links a,
+      .nav-cta,
+      .button,
+      .icon-button,
+      .art-frame img,
+      .art-frame::after,
+      .art-card,
+      .guess-image img,
+      .guess-image::after {
+        transition: none !important;
+      }
+
+      .type-cursor {
+        animation: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-bg" aria-hidden="true">
+    <video class="is-active" data-bg-video="hero" muted autoplay loop playsinline preload="auto">
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_074625_a81f018a-956b-43fb-9aee-4d1508e30e6a.mp4" type="video/mp4">
+    </video>
+    <video data-bg-video="story" muted autoplay loop playsinline preload="auto">
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4" type="video/mp4">
+    </video>
+    <video data-bg-video="video" muted autoplay loop playsinline preload="auto">
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260402_054547_9875cfc5-155a-4229-8ec8-b7ba7125cbf8.mp4" type="video/mp4">
+    </video>
+    <video data-bg-video="grid" muted autoplay loop playsinline preload="auto">
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4" type="video/mp4">
+    </video>
+    <video data-bg-video="activity" muted autoplay loop playsinline preload="auto">
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260324_151826_c7218672-6e92-402c-9e45-f1e0f454bdc4.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <header class="nav">
+    <div class="nav-shell liquid-glass">
+      <a class="logo" href="#top">Watercolor<sup>®</sup></a>
+      <nav class="nav-links" aria-label="Template navigation">
+        <a href="#hero">Home</a>
+        <a href="#watercolor-overview">Basics</a>
+        <a href="#watercolor-history">History</a>
+        <a href="#color-mixing-game">Game</a>
+      </nav>
+      <a class="nav-cta" href="#start"><img class="nav-cta-mark" src="assets/bangsai-logo-transparent-clean.png" alt="">Bangsaiwitthaya School</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" id="hero" data-bg="hero">
+      <div class="hero-inner">
+        <div>
+          <h1 class="hero-title display">
+            <span id="typewriter">พื้นฐานสีน้ำ<br><em>Watercolor Basics</em></span><span class="type-cursor" id="typeCursor"></span>
+          </h1>
+        </div>
+        <aside class="hero-side reveal" aria-label="เกมผสมสี">
+          <div class="mix-hero-card liquid-glass">
+            <span class="empty-label">Color Mixing Game</span>
+            <div class="mix-game-head">
+              <div class="mix-team is-active" id="miniTeamACard">Team A<strong id="miniTeamA">0</strong><span id="miniTurnA">0 / 4 ตา</span></div>
+              <div class="mix-round">Round<strong id="miniRound">1 / 8</strong><span id="miniCurrentTeam">ตาทีม A</span></div>
+              <div class="mix-team" id="miniTeamBCard">Team B<strong id="miniTeamB">0</strong><span id="miniTurnB">0 / 4 ตา</span></div>
+            </div>
+            <div class="mix-board">
+              <div>
+                <div class="mix-swatch target is-hidden" id="miniTarget">HIDDEN</div>
+                <div class="mix-label"><span>Target</span><small id="miniTargetLabel">กดดูสี 10 วิ</small></div>
+              </div>
+              <div>
+                <div class="mix-swatch result" id="miniResult"></div>
+                <div class="mix-label"><span>Your Mix</span><small id="miniAccuracy">รอเริ่มรอบ</small></div>
+              </div>
+            </div>
+            <div class="mix-palette" id="miniSwatches" aria-label="เลือกสีสำหรับผสม"></div>
+            <div class="mix-sliders" id="miniSliders"></div>
+            <div class="mix-result-panel" id="miniResultBox">
+              <span>กด “แสดงสี 10 วิ” เพื่อจำสีเป้าหมาย แล้วเลือกสี 2-3 สีเพื่อผสมให้ใกล้ที่สุด</span>
+              <div class="mix-meter"><span id="miniMeter"></span></div>
+            </div>
+            <p class="mix-status" id="miniMixStatus">ปรับสัดส่วนสีและน้ำให้เข้าใกล้สีเป้าหมาย ยิ่งใกล้ยิ่งได้คะแนนมาก</p>
+          </div>
+          <div class="hero-actions">
+            <button class="button" type="button" id="miniViewTarget">แสดงสี 10 วิ</button>
+            <button class="button" type="button" id="miniCheckMix">ตรวจสี</button>
+            <button class="button ghost liquid-glass" type="button" id="miniResetMix">เริ่มเกมใหม่</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="portal-journey" id="portal" aria-label="Portal scroll scene">
+      <div class="portal-sticky">
+        <img class="portal-world" id="portalWorld" src="https://res.cloudinary.com/dsdhxhhqh/image/upload/v1779975077/world_bg_jzzcn1.jpg" alt="">
+        <img class="portal-frame" id="portalFrame" src="https://res.cloudinary.com/dsdhxhhqh/image/upload/v1779974947/portal_bg_mu60k9.png" alt="">
+        <img class="portal-emblem" id="portalEmblem" src="assets/bangsai-logo-transparent-clean.png" alt="">
+        <img class="curtain curtain-left" id="curtainLeft" src="https://res.cloudinary.com/dsdhxhhqh/image/upload/v1779975070/curtain_left_cdht6q.png" alt="">
+        <img class="curtain curtain-right" id="curtainRight" src="https://res.cloudinary.com/dsdhxhhqh/image/upload/v1779975071/curtain_right_a9bn3i.png" alt="">
+
+        <nav class="portal-nav" aria-label="Portal navigation">
+          <div class="portal-nav-group">
+            <a href="#watercolor-overview">Basics</a>
+            <a href="#watercolor-history">History</a>
+            <a href="#watercolor-tools">Tools</a>
+          </div>
+          <svg class="portal-star" viewBox="0 0 28 28" aria-hidden="true">
+            <path fill="currentColor" d="M14 2l2.09 6.42H23l-5.45 3.96 2.08 6.42L14 14.84 8.37 18.8l2.08-6.42L5 8.42h6.91L14 2z"/>
+          </svg>
+          <div class="portal-nav-group">
+            <a href="#hero">Layout</a>
+            <a href="#color-mixing-game">Game</a>
+            <a href="#lesson-summary">Summary</a>
+          </div>
+        </nav>
+
+        <div class="portal-hero-copy" id="portalHeroCopy">
+          <h2 class="portal-title">WATERCOLOR · LEARNING GATE</h2>
+          <p class="portal-copy">ทำไมสีน้ำหนึ่งสีจึงเข้ม อ่อน ฟุ้ง หรือโปร่งได้ไม่เหมือนกัน? คำตอบเริ่มจากการมองเห็นความสัมพันธ์ของ Water, Pigment และ Paper.</p>
+        </div>
+
+        <div class="portal-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <div class="portal-cue" aria-hidden="true">
+          <span>Descend</span>
+          <span class="portal-cue-icon">⌄</span>
+        </div>
+
+        <div class="portal-final" id="portalFinal">
+          <div>
+            <h2>WATER COLOR ENTER THE REASON</h2>
+            <p>เรียนรู้ว่าสีน้ำคืออะไร ประวัติและที่มา อุปกรณ์พื้นฐาน เทคนิคระบาย การผสมสี ความต่างจากสีชนิดอื่น พร้อมเกมผสมสีและกิจกรรมสังเกตงานสีน้ำ</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="watercolor-overview" data-bg="story">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 01</span><h2 class="section-title display">สีน้ำคืออะไร<span class="lesson-title-en">What Is Watercolor?</span></h2></div>
+          <p class="section-note">Watercolor is the art of balancing pigment, water, and paper.</p>
+        </div>
+        <div class="split">
+          <div class="empty-panel liquid-glass content-card reveal">
+            <span class="empty-label">Core idea</span>
+            <p class="lesson-copy">สีน้ำคือสีที่ใช้ <strong>Water</strong> เป็นตัวพา <strong>Pigment</strong> ให้เคลื่อนที่และซึมลงบน <strong>Watercolor Paper</strong> จุดเด่นคือความโปร่งใสหรือ <strong>Transparency</strong> ทำให้แสงสะท้อนจากพื้นกระดาษกลับขึ้นมาผ่านชั้นสี ภาพจึงดูเบา สว่าง และมีบรรยากาศเฉพาะตัว</p>
+            <p class="lesson-copy">สีน้ำไม่ใช่แค่การระบายสีให้เต็มพื้นที่ แต่เป็นการตัดสินใจว่าจะปล่อยน้ำให้ไหลตรงไหน ควรเว้นกระดาษขาวไว้ตรงไหน และควรลงสีซ้ำเมื่อใด</p>
+          </div>
+          <div class="empty-panel liquid-glass content-card reveal">
+            <span class="empty-label">Worldwide terms</span>
+            <ul class="term-list"><li><strong>Water</strong> ควบคุมความอ่อนเข้มและการไหล</li><li><strong>Pigment</strong> คือเม็ดสีที่ให้สีจริง</li><li><strong>Paper</strong> คือพื้นที่รับน้ำและสะท้อนแสง</li></ul>
+            <button class="popup-link" type="button" data-popup="glossary">Open Glossary</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="watercolor-history" data-bg="video">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 02</span><h2 class="section-title display">ประวัติและที่มา<span class="lesson-title-en">History and Origins of Watercolor</span></h2></div>
+          <p class="section-note">จากเม็ดสีธรรมชาติ สู่สื่อศิลปะที่ใช้บันทึกแสง ธรรมชาติ และบรรยากาศ</p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Ancient pigments</span><p class="lesson-copy">การใช้สีผสมน้ำเกิดขึ้นมานานมาก มนุษย์นำสีจากดิน แร่ พืช หรือถ่านมาผสมกับของเหลวเพื่อสร้างภาพบนผนัง วัตถุ และวัสดุต่าง ๆ</p></div></article>
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Nature records</span><p class="lesson-copy">สีน้ำเหมาะกับการบันทึกธรรมชาติ ภาพพฤกษศาสตร์ แผนที่ ภาพร่าง และงานเดินทาง เพราะพกพาง่าย แห้งไว และจับรายละเอียดได้รวดเร็ว</p></div></article>
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">British watercolor</span><p class="lesson-copy">ช่วงศตวรรษที่ 18-19 สีน้ำได้รับความนิยมมากในอังกฤษ ศิลปินใช้ถ่ายทอดทิวทัศน์ เมฆ น้ำ แสง และบรรยากาศ จนสีน้ำกลายเป็นสื่อศิลปะที่สมบูรณ์ด้วยตัวเอง</p><button class="popup-link" type="button" data-popup="history">View Timeline</button></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="watercolor-components" data-bg="grid">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 03</span><h2 class="section-title display">ส่วนประกอบของสีน้ำ<span class="lesson-title-en">Components of Watercolor Paint</span></h2></div>
+          <p class="section-note">สีน้ำทำงานผ่านความสัมพันธ์ของ Pigment, Binder และ Water</p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile liquid-glass reveal" data-popup="pigment" role="button" tabindex="0"><div class="tile-body"><span class="empty-label">Pigment</span><p class="lesson-copy">เม็ดสีคือส่วนที่ให้สี แต่ละสีมีนิสัยต่างกัน บางสีโปร่ง บางสีทึบ บางสีติดกระดาษแน่น และบางสีล้างออกได้ง่าย</p></div></article>
+          <article class="tile liquid-glass reveal" data-popup="binder" role="button" tabindex="0"><div class="tile-body"><span class="empty-label">Binder / Gum Arabic</span><p class="lesson-copy">ตัวประสานช่วยยึดเม็ดสีให้เกาะกับพื้นผิว ในสีน้ำมักใช้ <strong>Gum Arabic</strong> ซึ่งละลายน้ำได้และช่วยให้สีกลับมาใช้งานได้เมื่อเติมน้ำ</p></div></article>
+          <article class="tile liquid-glass reveal" data-popup="water" role="button" tabindex="0"><div class="tile-body"><span class="empty-label">Water</span><p class="lesson-copy">น้ำทำให้สีเคลื่อนที่ ควบคุมความเข้มอ่อน ความฟุ้ง และรอยขอบของสี จึงเป็นตัวแปรสำคัญที่สุดในการเรียนสีน้ำ</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="watercolor-characteristics" data-bg="activity">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 04</span><h2 class="section-title display">ลักษณะเด่นของสีน้ำ<span class="lesson-title-en">Key Characteristics of Watercolor</span></h2></div>
+          <p class="section-note">Transparent, light, fluid, layered, and alive.</p>
+        </div>
+        <div class="split">
+          <div class="empty-panel liquid-glass content-card reveal"><span class="empty-label">Material behavior</span><p class="lesson-copy">สีน้ำมีความโปร่งใส สีจึงไม่ปิดกระดาษทั้งหมด ร่องรอยน้ำ เช่น <strong>Flow</strong>, <strong>Diffusion</strong>, <strong>Bloom</strong> และ <strong>Edge</strong> ทำให้ภาพมีชีวิตและดูเป็นธรรมชาติ</p><p class="lesson-copy">ความงามของสีน้ำมักเกิดจากการคุมบางส่วน และยอมให้บางส่วนไหลเองอย่างมีจังหวะ</p></div>
+          <div class="stack reveal"><div class="empty-panel liquid-glass"><span class="empty-label">Transparency / Opacity</span><p class="lesson-copy">โปร่งใสคือจุดแข็งของสีน้ำ ส่วนความทึบควรใช้เท่าที่จำเป็น</p></div><div class="empty-panel liquid-glass"><span class="empty-label">Layering / Glazing</span><p class="lesson-copy">การทับสีบาง ๆ หลายชั้นช่วยสร้างมิติ โดยไม่ทำให้ภาพหนักเกินไป</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="watercolor-tools" data-bg="story">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 05</span><h2 class="section-title display">อุปกรณ์พื้นฐาน<span class="lesson-title-en">Essential Watercolor Tools</span></h2></div>
+          <p class="section-note">อุปกรณ์ไม่ได้มีไว้แค่ใช้งาน แต่มีไว้ควบคุมปริมาณน้ำและจังหวะของสี</p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Paint / Brush / Palette</span><p class="lesson-copy">สีน้ำให้เม็ดสี พู่กันควบคุมรอยและปริมาณน้ำ ส่วนจานสีใช้ทดลองสัดส่วนก่อนลงบนกระดาษจริง</p></div></article>
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Watercolor Paper</span><p class="lesson-copy">กระดาษสีน้ำต้องรับน้ำได้ดี มีความหนาและพื้นผิวที่ช่วยเก็บรอยพู่กัน กระดาษที่บางเกินไปมักย่นหรือยุ่ยง่าย</p></div></article>
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Water / Tissue / Tape</span><p class="lesson-copy">น้ำใช้ล้างและเจือสี กระดาษซับช่วยคุมความเปียก เทปช่วยยึดกระดาษให้เรียบและสร้างขอบงานสะอาด</p><button class="popup-link" type="button" data-popup="tools">Tool Checklist</button></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="watercolor-vs-media" data-bg="video">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 06</span><h2 class="section-title display">สีน้ำกับสีชนิดอื่น<span class="lesson-title-en">Watercolor vs. Other Painting Media</span></h2></div>
+          <p class="section-note">เปรียบเทียบจากความโปร่งใส เวลาแห้ง การแก้ไข และพื้นผิวของสี</p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile liquid-glass reveal" data-popup="mediaWatercolor" role="button" tabindex="0"><div class="tile-body"><span class="empty-label">Watercolor</span><p class="lesson-copy">โปร่งใส เบา ซึมกับกระดาษ เหมาะกับแสง บรรยากาศ ท้องฟ้า น้ำ ใบไม้ และงานที่ต้องการความนุ่ม</p></div></article>
+          <article class="tile liquid-glass reveal" data-popup="mediaAcrylic" role="button" tabindex="0"><div class="tile-body"><span class="empty-label">Acrylic</span><p class="lesson-copy">ทึบกว่า แห้งเร็ว ระบายทับง่าย เหมาะกับสีสด ขอบชัด พื้นผิวแน่น และงานที่ต้องการความคงทน</p></div></article>
+          <article class="tile liquid-glass reveal" data-popup="mediaOil" role="button" tabindex="0"><div class="tile-body"><span class="empty-label">Oil Paint</span><p class="lesson-copy">แห้งช้า เกลี่ยได้นาน สีหนาและมีมิติ เหมาะกับงานที่ต้องสร้างชั้นสี ความลึก และผิวสัมผัส</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="watercolor-techniques" data-bg="grid">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 07</span><h2 class="section-title display">วิธีการระบายเบื้องต้น<span class="lesson-title-en">Basic Watercolor Techniques</span></h2></div>
+          <p class="section-note">เทคนิคพื้นฐานช่วยให้เข้าใจว่าควรคุมขอบ คุมความฟุ้ง และคุมชั้นสีอย่างไร</p>
+        </div>
+        <div class="video-feature reveal" style="margin-bottom:18px">
+          <video controls muted playsinline preload="metadata" poster="https://images.pexels.com/videos/37431113/pexels-photo-37431113.jpeg?auto=compress&cs=tinysrgb&w=1600">
+            <source src="https://www.pexels.com/download/video/37431113/" type="video/mp4">
+          </video>
+          <div class="video-caption">
+            <div class="empty-panel liquid-glass">
+              <span class="empty-label">Real tools video</span>
+              <p class="lesson-copy">ดูการใช้พู่กัน ถาดสี และน้ำจริง เพื่อสังเกตจังหวะการผสมสี การแตะน้ำ และการควบคุมสีบนกระดาษ</p>
+            </div>
+          </div>
+        </div>
+        <div class="tile-grid">
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Wet-on-Dry</span><p class="lesson-copy">สีเปียกระบายบนกระดาษแห้ง ขอบชัด คุมรูปทรงง่าย เหมาะกับรายละเอียดหรือพื้นที่ที่ต้องการความคม</p></div></article>
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Wet-on-Wet</span><p class="lesson-copy">สีเปียกระบายบนกระดาษเปียก สีจะฟุ้งและไหล เหมาะกับท้องฟ้า เมฆ น้ำ และบรรยากาศนุ่ม</p></div></article>
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Layering / Glazing</span><p class="lesson-copy">ลงสีบาง ๆ หลายชั้นหลังจากชั้นก่อนหน้าแห้ง ช่วยเพิ่มมิติและความลึกของภาพ</p><button class="popup-link" type="button" data-popup="techniques">Technique Notes</button></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="color-mixing-basics" data-bg="activity">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 08</span><h2 class="section-title display">การผสมสีเบื้องต้น<span class="lesson-title-en">Color Mixing Basics</span></h2></div>
+          <p class="section-note">Color mixing is not guessing; it is seeing relationships between colors.</p>
+        </div>
+        <div class="split">
+          <div class="activity-stage reveal">
+            <div class="color-logic-board">
+              <div>
+                <div class="color-wheel" aria-label="Color wheel"></div>
+                <p class="logic-label">Color Wheel: primary colors, complementary colors, muted colors</p>
+              </div>
+              <div class="value-scale">
+                <strong class="display">Value</strong>
+                <div class="value-ramp" aria-label="Color value scale"></div>
+                <div class="value-chip-row" aria-hidden="true">
+                  <span style="--chip:#142033"></span><span style="--chip:#486581"></span><span style="--chip:#91aac4"></span><span style="--chip:#eef6ff"></span>
+                </div>
+                <p class="logic-label">Value คือค่าน้ำหนักของสี จากเข้มไปอ่อน เกิดได้จาก pigment และปริมาณน้ำ</p>
+              </div>
+            </div>
+          </div>
+          <div class="empty-panel liquid-glass content-card reveal"><span class="empty-label">Mixing principles</span><p class="lesson-copy">สีใหม่เกิดจากสัดส่วนของสีและปริมาณน้ำ แม่สีสร้างสีใหม่ได้ สีคู่ตรงข้ามช่วยลดความสดให้เกิด <strong>Muted Colors</strong> และน้ำช่วยเปลี่ยน <strong>Value</strong> จากเข้มไปอ่อน</p><button class="popup-link" type="button" data-popup="mixing">Mixing Rules</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="color-mixing-game" data-bg="activity">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 09</span><h2 class="section-title display">เกมผสมสี<span class="lesson-title-en">Color Mixing Game</span></h2></div>
+          <p class="section-note">เกมนี้ใช้ฝึกจำสี วิเคราะห์สัดส่วน และเข้าใจว่าน้ำทำให้สีเปลี่ยนอย่างไร</p>
+        </div>
+        <div class="activity-band">
+          <div class="game-section-mount reveal" id="gameMount" aria-label="พื้นที่เกมผสมสี"></div>
+          <div class="stack reveal"><div class="empty-panel liquid-glass"><span class="empty-label">Game concept</span><p class="lesson-copy">ผู้เล่นจำสีเป้าหมาย แล้วเลือกสีที่ 1 สีที่ 2 ปรับสัดส่วนและปริมาณน้ำให้ใกล้ที่สุด คะแนนช่วยให้เห็นว่าการสังเกตสีสำคัญกว่าการเดา</p></div><button class="popup-link" type="button" data-popup="game">Game Flow</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="watercolor-artworks" data-bg="video">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 10</span><h2 class="section-title display">ตัวอย่างงานสีน้ำ<span class="lesson-title-en">Observing Watercolor Artworks</span></h2></div>
+          <p class="section-note">สังเกตร่องรอยที่บอกว่านี่คือสีน้ำ: wash, edge, bloom, transparency, preserving white</p>
+        </div>
+        <div class="art-gallery reveal" aria-label="Watercolor artwork gallery">
+          <div class="art-track" id="artTrack">
+            <article class="art-card liquid-glass">
+              <button class="art-frame" type="button" data-art-title="Oberwesel" data-art-artist="Joseph Mallord William Turner, 1840" data-art-img="https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%2C%20Oberwesel%2C%201840%2C%20NGA%20139374.jpg" data-art-note="ตัวอย่างการใช้ wash บาง ๆ และการทับชั้นสีเพื่อสร้างบรรยากาศเมืองริมน้ำ แสงดูนุ่มเพราะสีโปร่งและปล่อยให้กระดาษทำงานร่วมกับสี">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%2C%20Oberwesel%2C%201840%2C%20NGA%20139374.jpg" alt="Oberwesel watercolor by J. M. W. Turner" loading="lazy">
+              </button>
+              <div class="art-body">
+                <h3 class="art-title">Oberwesel</h3>
+                <p class="art-meta">J. M. W. Turner, 1840, watercolor and gouache over graphite</p>
+                <p class="art-note">ดูการซ้อนสีบาง ๆ และบรรยากาศหมอกที่เกิดจากความโปร่งใสของสีน้ำ</p>
+              </div>
+            </article>
+            <article class="art-card liquid-glass">
+              <button class="art-frame" type="button" data-art-title="Venice" data-art-artist="John Singer Sargent, early 20th century" data-art-img="https://commons.wikimedia.org/wiki/Special:FilePath/Venice%20MET%20APS2532.jpg" data-art-note="ภาพเมืองเวนิสของ Sargent แสดงจังหวะพู่กันที่รวดเร็ว มีทั้งพื้นที่ปล่อยขาว รอยขอบแห้ง และ wash ที่บอกแสงสะท้อนบนผิวน้ำ">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Venice%20MET%20APS2532.jpg" alt="Venice watercolor by John Singer Sargent" loading="lazy">
+              </button>
+              <div class="art-body">
+                <h3 class="art-title">Venice</h3>
+                <p class="art-meta">John Singer Sargent, watercolor on paper</p>
+                <p class="art-note">สังเกตจังหวะพู่กันหลวม ๆ และพื้นที่ขาวที่ช่วยให้ภาพสว่างโดยไม่ต้องใช้สีขาวทับ</p>
+              </div>
+            </article>
+            <article class="art-card liquid-glass">
+              <button class="art-frame" type="button" data-art-title="White Ships" data-art-artist="John Singer Sargent, c. 1908" data-art-img="https://commons.wikimedia.org/wiki/Special:FilePath/Brooklyn%20Museum%20-%20White%20Ships%20-%20John%20Singer%20Sargent.jpg" data-art-note="เรือสีขาวในภาพช่วยให้เห็นหลัก preserving white ชัดมาก ศิลปินปล่อยกระดาษขาวไว้เป็นแสง แล้วใช้สีรอบข้างกำหนดรูปทรง">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Brooklyn%20Museum%20-%20White%20Ships%20-%20John%20Singer%20Sargent.jpg" alt="White Ships watercolor by John Singer Sargent" loading="lazy">
+              </button>
+              <div class="art-body">
+                <h3 class="art-title">White Ships</h3>
+                <p class="art-meta">John Singer Sargent, c. 1908, watercolor</p>
+                <p class="art-note">เหมาะสำหรับอธิบายการเว้นขาวและการใช้เงาบาง ๆ เพื่อสร้างมิติ</p>
+              </div>
+            </article>
+            <article class="art-card liquid-glass">
+              <button class="art-frame" type="button" data-art-title="The Blue Boat" data-art-artist="Winslow Homer, 1892" data-art-img="https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Blue%20Boat%20-%20Google%20Art%20Project.jpg" data-art-note="งานของ Homer มักใช้สีน้ำเล่าแสงธรรมชาติอย่างตรงไปตรงมา ภาพนี้ช่วยให้เห็นความต่างระหว่างสีเข้มในเงากับสีบางในแสง">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Blue%20Boat%20-%20Google%20Art%20Project.jpg" alt="The Blue Boat watercolor by Winslow Homer" loading="lazy">
+              </button>
+              <div class="art-body">
+                <h3 class="art-title">The Blue Boat</h3>
+                <p class="art-meta">Winslow Homer, 1892, watercolor</p>
+                <p class="art-note">ใช้ดู value และการคุมโทนเข้มอ่อนของสีในภาพทิวทัศน์น้ำ</p>
+              </div>
+            </article>
+            <article class="art-card liquid-glass">
+              <button class="art-frame" type="button" data-art-title="Four Fishwives" data-art-artist="Winslow Homer, 1881" data-art-img="https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Four%20Fishwives%20%281881%29.jpg" data-art-note="ภาพคนครึ่งตัวและเสื้อผ้าในงานนี้ช่วยให้เห็นว่า watercolor ไม่ได้ใช้กับทิวทัศน์เท่านั้น แต่ใช้กับ figure และบรรยากาศชีวิตประจำวันได้ดี">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Four%20Fishwives%20%281881%29.jpg" alt="Four Fishwives watercolor by Winslow Homer" loading="lazy">
+              </button>
+              <div class="art-body">
+                <h3 class="art-title">Four Fishwives</h3>
+                <p class="art-meta">Winslow Homer, 1881, watercolor</p>
+                <p class="art-note">ดูการใช้เงาและ wash บาง ๆ เพื่อสร้างรูปคนโดยไม่ต้องเกลี่ยให้เนียนทั้งหมด</p>
+              </div>
+            </article>
+            <article class="art-card liquid-glass">
+              <button class="art-frame" type="button" data-art-title="Simplon Pass: The Tease" data-art-artist="John Singer Sargent, 1911" data-art-img="https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Simplon%20Pass-%20The%20Tease%20-%20Google%20Art%20Project.jpg" data-art-note="ภาพภูเขาและแสงกลางแจ้งช่วยให้เห็นการใช้สีน้ำแบบเร็ว มีทั้ง wash กว้าง รอยพู่กันแห้ง และสีที่ปล่อยให้ไหลอย่างมีจังหวะ">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Simplon%20Pass-%20The%20Tease%20-%20Google%20Art%20Project.jpg" alt="Simplon Pass watercolor by John Singer Sargent" loading="lazy">
+              </button>
+              <div class="art-body">
+                <h3 class="art-title">Simplon Pass: The Tease</h3>
+                <p class="art-meta">John Singer Sargent, 1911, watercolor</p>
+                <p class="art-note">เหมาะสำหรับชี้ให้เห็นรอยพู่กันสดและความเร็วของสีน้ำเมื่อใช้กลางแจ้ง</p>
+              </div>
+            </article>
+          </div>
+          <div class="art-controls" aria-label="Gallery controls">
+            <button class="art-control" type="button" id="artPrev" aria-label="เลื่อนภาพก่อนหน้า">&larr;</button>
+            <button class="art-control" type="button" id="artNext" aria-label="เลื่อนภาพถัดไป">&rarr;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="lesson-summary" data-bg="hero">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div><span class="lesson-kicker">Section 11</span><h2 class="section-title display">สรุปพื้นฐานสีน้ำ<span class="lesson-title-en">Lesson Summary</span></h2></div>
+          <p class="section-note">Water + Pigment + Paper = the foundation of watercolor thinking.</p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Key takeaway</span><p class="lesson-copy">สีน้ำคือการเข้าใจน้ำก่อนเข้าใจสี ความโปร่งใส การเว้นขาว การทับชั้น และการผสมสีคือพื้นฐานที่ทำให้ผู้เรียนเริ่มควบคุมงานได้</p></div></article>
+          <article class="tile liquid-glass reveal"><div class="tile-body"><span class="empty-label">Notebook questions</span><ul class="lesson-list"><li>สีน้ำต่างจากสีอะคริลิกอย่างไร?</li><li>น้ำเปลี่ยนอารมณ์ของสีอย่างไร?</li><li>อุปกรณ์ใดสำคัญที่สุดในการคุมน้ำ?</li></ul></div></article>
+        </div>
+        <div class="guess-activity reveal" aria-label="ทายชนิดสีจากภาพ">
+          <div class="guess-head liquid-glass">
+            <h3 class="display">ทายสิว่านี่คือสีอะไร</h3>
+            <p>ให้นักเรียนดูร่องรอยของสีจากภาพก่อนตอบ: โปร่งหรือทึบ, ขอบสีคมไหม, เห็นเนื้อกระดาษหรือผิวสีหนาแค่ไหน</p>
+          </div>
+          <div class="guess-grid">
+            <article class="guess-card liquid-glass">
+              <div class="guess-image">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%2C%20Oberwesel%2C%201840%2C%20NGA%20139374.jpg" alt="ตัวอย่างงานสีน้ำสำหรับให้นักเรียนทาย" loading="lazy">
+              </div>
+              <div class="guess-body">
+                <span class="empty-label">ภาพที่ 1</span>
+                <p class="guess-question">ภาพนี้สีดูโปร่ง เห็นแสงนุ่ม และมีการซ้อนสีบาง ๆ น่าจะเป็นสีชนิดใด?</p>
+                <button class="popup-link guess-toggle" type="button">เฉลย</button>
+                <p class="guess-answer"><strong>สีน้ำ (Watercolor)</strong> เพราะมีความโปร่งใส เห็นบรรยากาศจากชั้นสีบาง ๆ และใช้กระดาษช่วยสร้างแสง</p>
+              </div>
+            </article>
+            <article class="guess-card liquid-glass">
+              <div class="guess-image">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Sunset_at_Lotus_Pond_-_72x96_Acrylic_on_canvas_by_Matt_Kaplinsky.jpg/1280px-Sunset_at_Lotus_Pond_-_72x96_Acrylic_on_canvas_by_Matt_Kaplinsky.jpg" alt="ตัวอย่างงานสีอะคริลิกบนผ้าใบสำหรับให้นักเรียนทาย" loading="lazy">
+              </div>
+              <div class="guess-body">
+                <span class="empty-label">ภาพที่ 2</span>
+                <p class="guess-question">ภาพนี้เป็นงานศิลปะจริง สีสด ทึบกว่า และเห็นร่องรอยพื้นผิวบนผ้าใบ น่าจะเป็นสีชนิดใด?</p>
+                <button class="popup-link guess-toggle" type="button">เฉลย</button>
+                <p class="guess-answer"><strong>สีอะคริลิก (Acrylic)</strong> เพราะสีทึบกว่า แห้งเร็ว และมักให้พื้นที่สีแน่น ขอบชัด ระบายทับได้ง่าย</p>
+              </div>
+            </article>
+            <article class="guess-card liquid-glass">
+              <div class="guess-image">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" alt="ตัวอย่างสีน้ำมันสำหรับให้นักเรียนทาย" loading="lazy">
+              </div>
+              <div class="guess-body">
+                <span class="empty-label">ภาพที่ 3</span>
+                <p class="guess-question">ภาพนี้เห็นรอยปาดสีหนา สีมีมิติ และผิวสัมผัสชัดมาก น่าจะเป็นสีชนิดใด?</p>
+                <button class="popup-link guess-toggle" type="button">เฉลย</button>
+                <p class="guess-answer"><strong>สีน้ำมัน (Oil Paint)</strong> เพราะสีมีเนื้อหนา เกลี่ยได้นาน และสร้างรอยพู่กันกับชั้นสีที่มีมิติได้ชัด</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section old-template-section" id="story" data-bg="story">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <h2 class="section-title display">Section สำหรับเปิดประเด็น</h2>
+          <p class="section-note">พื้นที่นี้ไว้ใส่คำอธิบายสั้น ๆ หรือคำถามชวนคิดก่อนเข้าสู่เนื้อหา ไม่ควรยาวเกินไปเมื่อฉายหน้าห้อง</p>
+        </div>
+        <div class="split">
+          <div class="split-media reveal">
+            <video muted autoplay loop playsinline preload="auto">
+              <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="stack reveal">
+            <div class="empty-panel liquid-glass">
+              <span class="empty-label">Content block A</span>
+              <span class="empty-line"></span>
+              <span class="empty-line"></span>
+              <span class="empty-line short"></span>
+            </div>
+            <div class="rule"></div>
+            <div class="empty-panel liquid-glass">
+              <span class="empty-label">Content block B</span>
+              <span class="empty-line"></span>
+              <span class="empty-line"></span>
+              <span class="empty-line short"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section old-template-section" id="video" data-bg="video">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <h2 class="section-title display">Featured media section</h2>
+          <p class="section-note">ใช้เป็นพื้นที่ใส่วิดีโอ ภาพตัวอย่าง หรือสไลด์ที่ต้องการให้เป็นจุดว้าวของคาบ</p>
+        </div>
+        <div class="video-feature reveal">
+          <video muted autoplay loop playsinline preload="auto">
+            <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260402_054547_9875cfc5-155a-4229-8ec8-b7ba7125cbf8.mp4" type="video/mp4">
+          </video>
+          <div class="video-caption">
+            <div class="empty-panel liquid-glass">
+              <span class="empty-label">Caption / teaching note</span>
+              <span class="empty-line"></span>
+              <span class="empty-line short"></span>
+            </div>
+            <a class="button ghost liquid-glass" href="#activity">ไปกิจกรรม</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section old-template-section" data-bg="grid">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <h2 class="section-title display">Grid สำหรับตัวอย่าง</h2>
+          <p class="section-note">วางหัวข้อย่อย 2 ถึง 4 ช่อง เช่น ตัวอย่างภาพ อุปกรณ์ ขั้นตอน หรือคำถามวิเคราะห์</p>
+        </div>
+        <div class="tile-grid">
+          <article class="tile liquid-glass reveal">
+            <div class="tile-media">
+              <video muted autoplay loop playsinline preload="auto">
+                <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="tile-body">
+              <span class="empty-label">Example slot</span>
+              <span class="empty-line"></span>
+              <span class="empty-line short"></span>
+            </div>
+          </article>
+          <article class="tile liquid-glass reveal">
+            <div class="tile-media">
+              <video muted autoplay loop playsinline preload="auto">
+                <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260324_151826_c7218672-6e92-402c-9e45-f1e0f454bdc4.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="tile-body">
+              <span class="empty-label">Example slot</span>
+              <span class="empty-line"></span>
+              <span class="empty-line short"></span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section old-template-section" id="activity" data-bg="activity">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <h2 class="section-title display">Activity station</h2>
+          <p class="section-note">ช่องนี้เหมาะสำหรับเกม แบบฝึกคิด หรือกิจกรรมท้ายคาบ ใส่ปุ่มและ feedback ได้</p>
+        </div>
+        <div class="activity-band">
+          <div class="activity-stage reveal">
+            <div>
+              <strong class="display">Interactive area</strong>
+              <p>พื้นที่วางเกม เครื่องมือ หรือคำถามให้นักเรียนตอบ</p>
+            </div>
+          </div>
+          <div class="stack reveal">
+            <div class="empty-panel liquid-glass">
+              <span class="empty-label">Controls</span>
+              <span class="empty-line"></span>
+              <span class="empty-line"></span>
+              <span class="empty-line short"></span>
+            </div>
+            <a class="button" href="#start">ปุ่มเริ่มกิจกรรม</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="footer-cta" id="start" data-bg="hero">
+      <div class="section-inner reveal">
+        <h2 class="section-title display">Class by amonthep khanthalerk</h2>
+        <p class="section-note footer-contact">Line : nw.tape &nbsp; Face : Tape &nbsp; Instragram : 1.1.6180 &nbsp; tel. 095-5954869</p>
+        <div class="social-row" style="justify-content:center">
+          <a class="icon-button liquid-glass" href="#top" aria-label="กลับขึ้นบน">↑</a>
+          <a class="button" href="#hero">กลับไป Hero</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="mix-memory-modal" id="miniMemoryModal" aria-hidden="true">
+    <div class="mix-memory-card">
+      <div class="mix-memory-top">
+        <div>
+          <span class="empty-label">Memorize target color</span>
+          <h3 class="dialog-title display" style="margin:6px 0 0">จำสีเป้าหมาย</h3>
+        </div>
+        <div class="mix-timer" id="miniTimer">10</div>
+      </div>
+      <div class="mix-memory-target" id="miniMemoryTarget"></div>
+    </div>
+  </div>
+
+  <div class="mix-winner-toast" id="miniWinnerToast" aria-live="polite">
+    <span class="empty-label">Game result</span>
+    <h3 class="dialog-title display" id="miniWinnerTitle" style="margin:6px 0 8px">Winner</h3>
+    <p class="mix-status" id="miniWinnerDetail"></p>
+  </div>
+
+  <dialog class="lesson-dialog" id="lessonDialog">
+    <button class="dialog-close" type="button" id="dialogClose" aria-label="Close">×</button>
+    <div class="dialog-inner">
+      <h3 class="dialog-title display" id="dialogTitle">Watercolor Notes</h3>
+      <div class="dialog-body" id="dialogBody"></div>
+    </div>
+  </dialog>
+
+  <script>
+    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+    const lerp = (from, to, amount) => from + (to - from) * amount;
+    const easeInOut = (t) => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    const popupContent = {
+      glossary: {
+        title: "Watercolor Glossary",
+        body: "<p><strong>Transparency</strong> ความโปร่งใสของสี, <strong>Opacity</strong> ความทึบ, <strong>Wash</strong> การระบายสีบาง ๆ เป็นพื้นที่กว้าง, <strong>Bloom / Backrun</strong> รอยดันสีจากน้ำ, <strong>Glazing</strong> การทับชั้นสีโปร่งใส</p>"
+      },
+      history: {
+        title: "History Timeline",
+        body: "<figure class='dialog-figure'><img src='https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%2C%20Oberwesel%2C%201840%2C%20NGA%20139374.jpg' alt='Watercolor landscape by Joseph Mallord William Turner, 1840'><figcaption>Joseph Mallord William Turner, Oberwesel, 1840. Watercolor and gouache over graphite. Image source: Wikimedia Commons / National Gallery of Art.</figcaption></figure><p>สีน้ำเริ่มจากการใช้เม็ดสีผสมน้ำในวัฒนธรรมโบราณ ต่อมาใช้ในงานบันทึกธรรมชาติ แผนที่ และภาพร่าง ช่วงศตวรรษที่ 18-19 สีน้ำรุ่งเรืองมากในอังกฤษ โดยเฉพาะงานทิวทัศน์และบรรยากาศของแสง ภาพของ Turner แสดงให้เห็นว่าสีน้ำสามารถถ่ายทอดแสง ระยะ และบรรยากาศได้อย่างลึกซึ้ง</p>"
+      },
+      pigment: {
+        title: "Pigment / เม็ดสี",
+        body: "<figure class='dialog-figure'><img src='https://commons.wikimedia.org/wiki/Special:FilePath/Levigation%20of%20ochre%20pigment%20in%20water%20Waclaw%20Wantuch%2001.jpg' alt='Ochre pigment being mixed with water'><figcaption>ตัวอย่างเม็ดสีธรรมชาติในน้ำ สีที่เห็นในสีน้ำเริ่มจาก pigment ขนาดเล็กที่กระจายตัวบนกระดาษ</figcaption></figure><p><strong>Pigment</strong> คือส่วนที่ให้สีจริง เม็ดสีแต่ละชนิดมีน้ำหนัก ความโปร่ง และความติดกระดาษไม่เท่ากัน จึงทำให้สีน้ำแต่ละสีมีนิสัยต่างกัน บางสีฟุ้งง่าย บางสีตกตะกอน บางสีโปร่งมาก และบางสีทึบกว่า</p>"
+      },
+      binder: {
+        title: "Binder / Gum Arabic",
+        body: "<figure class='dialog-figure'><img src='https://commons.wikimedia.org/wiki/Special:FilePath/Gum%20Arabic.jpg' alt='Gum arabic resin'><figcaption>Gum Arabic คือยางไม้ธรรมชาติที่ใช้เป็นตัวประสานในสีน้ำ ช่วยให้เม็ดสีเกาะกับกระดาษ</figcaption></figure><p><strong>Binder</strong> หรือตัวประสานทำให้เม็ดสีไม่หลุดกระจายจนควบคุมไม่ได้ ในสีน้ำมักใช้ <strong>Gum Arabic</strong> เพราะละลายน้ำได้ เมื่อเติมน้ำ สีจึงกลับมาทำงานและกระจายบนกระดาษได้อีกครั้ง</p>"
+      },
+      water: {
+        title: "Water / น้ำ",
+        body: "<figure class='dialog-figure'><img src='https://commons.wikimedia.org/wiki/Special:FilePath/Rushing%20Water%20MET%20DT235920.jpg' alt='Watercolor artwork showing moving water'><figcaption>ตัวอย่างงานสีน้ำที่ใช้ร่องรอยของน้ำสร้างความเคลื่อนไหวและบรรยากาศ</figcaption></figure><p><strong>Water</strong> เป็นตัวแปรหลักของสีน้ำ น้ำมากทำให้สีอ่อน โปร่ง และไหลง่าย น้ำน้อยทำให้สีเข้มและคุมขอบได้ชัดขึ้น การเรียนสีน้ำจึงเริ่มจากการอ่านพฤติกรรมของน้ำบนกระดาษ</p>"
+      },
+      mediaWatercolor: {
+        title: "Watercolor / สีน้ำ",
+        body: "<figure class='dialog-figure'><img src='https://commons.wikimedia.org/wiki/Special:FilePath/Brush%20and%20watercolours.jpg' alt='Watercolor palette and brush'><figcaption>ตัวอย่างวัสดุสีน้ำ: จานสีและพู่กัน สีน้ำต้องใช้น้ำควบคุมความอ่อนเข้มและการไหล</figcaption></figure><figure class='dialog-figure'><img src='https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%2C%20Oberwesel%2C%201840%2C%20NGA%20139374.jpg' alt='Watercolor landscape by J. M. W. Turner'><figcaption>ตัวอย่างงานสีน้ำ: J.M.W. Turner, Oberwesel, 1840 แสดงความโปร่ง แสง และบรรยากาศของสีน้ำ</figcaption></figure><p>สีน้ำมีลักษณะโปร่งใส เห็นพื้นกระดาษ สีเบาและซึมได้ง่าย เหมาะกับภาพที่ต้องการแสง ความฟุ้ง และความนุ่มของบรรยากาศ</p>"
+      },
+      mediaAcrylic: {
+        title: "Acrylic / สีอะคริลิก",
+        body: "<figure class='dialog-figure'><img src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Sunset_at_Lotus_Pond_-_72x96_Acrylic_on_canvas_by_Matt_Kaplinsky.jpg/1280px-Sunset_at_Lotus_Pond_-_72x96_Acrylic_on_canvas_by_Matt_Kaplinsky.jpg' alt='Acrylic painting on canvas'><figcaption>ตัวอย่างงานอะคริลิกบนผ้าใบ: Sunset at Lotus Pond, acrylic on canvas. สีสด ทึบกว่า และเห็นพื้นผิวบนผ้าใบชัด</figcaption></figure><p>สีอะคริลิกเหมาะกับงานที่ต้องการสีสด ความคม และการทับชั้นที่ชัดเจน เมื่อแห้งแล้วสีจะกันน้ำในระดับหนึ่ง จึงให้ความรู้สึกต่างจากสีน้ำที่ซึมกับกระดาษ</p>"
+      },
+      mediaOil: {
+        title: "Oil Paint / สีน้ำมัน",
+        body: "<figure class='dialog-figure'><img src='https://commons.wikimedia.org/wiki/Special:FilePath/Bartolomeo%20Bettera%20-%20A%20painter%27s%20palette%20and%20brushes%20and%20others.jpg' alt='Painter palette and brushes'><figcaption>ตัวอย่างจานสีและพู่กันของจิตรกร สื่อถึงการผสมสีแบบสีน้ำมันที่มีเนื้อสีหนาและเกลี่ยได้นาน</figcaption></figure><figure class='dialog-figure'><img src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg' alt='Vincent van Gogh oil painting The Starry Night'><figcaption>ตัวอย่างงานสีน้ำมัน: Vincent van Gogh, The Starry Night แสดงรอยพู่กันหนาและพื้นผิวที่มีพลัง</figcaption></figure><p>สีน้ำมันแห้งช้า จึงเกลี่ยและแก้ไขบนผิวงานได้นานกว่า เหมาะกับงานที่ต้องการความลึก มิติ และผิวสัมผัสหนา ต่างจากสีน้ำที่เน้นความโปร่งและความเบา</p>"
+      },
+      tools: {
+        title: "Essential Tools Checklist",
+        body: "<figure class='dialog-figure'><img src='https://commons.wikimedia.org/wiki/Special:FilePath/Brush%20and%20watercolours.jpg' alt='A watercolor palette and brush'><figcaption>ตัวอย่างจานสีน้ำและพู่กัน อุปกรณ์หลักที่ใช้ควบคุมสีและปริมาณน้ำ</figcaption></figure><figure class='dialog-figure'><img src='https://commons.wikimedia.org/wiki/Special:FilePath/Set%20of%20watercolor%20paints%20-%20Ariel%20Waldman.jpg' alt='A set of watercolor paints'><figcaption>ชุดสีน้ำแบบตลับ เหมาะสำหรับการเริ่มเรียน เพราะพกพาง่ายและเห็นสีพื้นฐานชัดเจน</figcaption></figure><p>อุปกรณ์หลักคือ <strong>Watercolor Paint</strong>, <strong>Brush</strong>, <strong>Watercolor Paper</strong>, <strong>Palette</strong>, <strong>Water Cup</strong>, <strong>Tissue</strong> และ <strong>Tape</strong> สิ่งที่ต้องจำคือทุกชิ้นเกี่ยวข้องกับการคุมน้ำ ไม่ใช่แค่เตรียมของให้ครบ</p>"
+      },
+      techniques: {
+        title: "Technique Notes",
+        body: "<p><strong>Wet-on-Dry</strong> ให้ขอบชัด, <strong>Wet-on-Wet</strong> ให้สีฟุ้ง, <strong>Gradient Wash</strong> ใช้น้ำไล่น้ำหนัก, <strong>Layering</strong> เพิ่มความลึก, <strong>Preserving White</strong> เว้นกระดาษแทนแสงขาว</p>"
+      },
+      mixing: {
+        title: "Color Mixing Rules",
+        body: "<p>สีเปลี่ยนจาก 3 อย่าง: สีที่เลือก, สัดส่วนของสี, และปริมาณน้ำ ถ้าสีสดเกินไปให้ใช้สีคู่ตรงข้ามลดความสด ถ้าสีเข้มเกินไปให้เพิ่มน้ำ ถ้าสีอ่อนเกินไปให้เพิ่ม pigment หรือลดน้ำ</p>"
+      },
+      game: {
+        title: "Color Mixing Game Flow",
+        body: "<p>แสดงสีเป้าหมาย 10 วินาที จากนั้นซ่อนสี ให้ผู้เล่นปรับสีที่ 1 สีที่ 2 สัดส่วน และน้ำ กดตรวจสีเพื่อรับคะแนน เกมนี้ฝึก visual memory, color analysis และการคิดแบบ watercolor control</p>"
+      }
+    };
+
+    const lessonDialog = document.querySelector("#lessonDialog");
+    const dialogTitle = document.querySelector("#dialogTitle");
+    const dialogBody = document.querySelector("#dialogBody");
+    const dialogClose = document.querySelector("#dialogClose");
+
+    document.querySelectorAll("[data-popup]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const content = popupContent[button.dataset.popup];
+        if (!content || !lessonDialog || !dialogTitle || !dialogBody) return;
+        dialogTitle.textContent = content.title;
+        dialogBody.innerHTML = content.body;
+        lessonDialog.showModal();
+      });
+      button.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          button.click();
+        }
+      });
+    });
+
+    dialogClose?.addEventListener("click", () => lessonDialog?.close());
+    lessonDialog?.addEventListener("click", (event) => {
+      if (event.target === lessonDialog) lessonDialog.close();
+    });
+
+    const artTrack = document.querySelector("#artTrack");
+    const artCards = [...document.querySelectorAll(".art-card")];
+    let artIndex = 0;
+    const updateArtworkDeck = () => {
+      if (!artCards.length) return;
+      artCards.forEach((card, index) => {
+        card.classList.remove("is-active", "is-next", "is-next-2", "is-prev");
+        const offset = (index - artIndex + artCards.length) % artCards.length;
+        if (offset === 0) card.classList.add("is-active");
+        if (offset === 1) card.classList.add("is-next");
+        if (offset === 2) card.classList.add("is-next-2");
+        if (offset === artCards.length - 1) card.classList.add("is-prev");
+      });
+    };
+    const moveArtworkDeck = (direction) => {
+      if (!artCards.length) return;
+      artIndex = (artIndex + direction + artCards.length) % artCards.length;
+      updateArtworkDeck();
+    };
+
+    document.querySelector("#artPrev")?.addEventListener("click", () => moveArtworkDeck(-1));
+    document.querySelector("#artNext")?.addEventListener("click", () => moveArtworkDeck(1));
+    updateArtworkDeck();
+    document.querySelectorAll(".art-frame").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (!lessonDialog || !dialogTitle || !dialogBody) return;
+        dialogTitle.textContent = button.dataset.artTitle || "Watercolor artwork";
+        dialogBody.innerHTML = `
+          <figure class="dialog-figure">
+            <img src="${button.dataset.artImg || ""}" alt="${button.dataset.artTitle || "Watercolor artwork"}">
+            <figcaption>${button.dataset.artArtist || ""}</figcaption>
+          </figure>
+          <p>${button.dataset.artNote || ""}</p>
+        `;
+        lessonDialog.showModal();
+      });
+    });
+
+    const openImageZoom = (image, title = "Image detail", caption = "") => {
+      if (!image || !lessonDialog || !dialogTitle || !dialogBody) return;
+      dialogTitle.textContent = title;
+      dialogBody.innerHTML = `
+        <figure class="dialog-figure">
+          <img src="${image.src}" alt="${image.alt || title}">
+          <figcaption>${caption || image.alt || ""}</figcaption>
+        </figure>
+      `;
+      lessonDialog.showModal();
+    };
+
+    document.querySelectorAll(".guess-image img").forEach((image) => {
+      image.addEventListener("click", () => {
+        const card = image.closest(".guess-card");
+        const label = card?.querySelector(".empty-label")?.textContent || "ภาพตัวอย่าง";
+        const question = card?.querySelector(".guess-question")?.textContent || "";
+        openImageZoom(image, label, question);
+      });
+    });
+
+    document.querySelectorAll(".guess-toggle").forEach((button) => {
+      button.addEventListener("click", () => {
+        const card = button.closest(".guess-card");
+        card?.classList.toggle("is-revealed");
+        button.textContent = card?.classList.contains("is-revealed") ? "ซ่อนเฉลย" : "เฉลย";
+      });
+    });
+
+    const portalJourney = document.querySelector("#portal");
+    const portalWorld = document.querySelector("#portalWorld");
+    const portalFrame = document.querySelector("#portalFrame");
+    const portalEmblem = document.querySelector("#portalEmblem");
+    const curtainLeft = document.querySelector("#curtainLeft");
+    const curtainRight = document.querySelector("#curtainRight");
+    const portalFinal = document.querySelector("#portalFinal");
+    const pointer = { targetX: 0, targetY: 0, x: 0, y: 0 };
+    const portalScroll = { target: 0, current: 0 };
+
+    setTimeout(() => {
+      portalJourney?.style.setProperty("--entry", "1");
+    }, 100);
+
+    addEventListener("pointermove", (event) => {
+      if (reduceMotion) return;
+      pointer.targetX = ((event.clientX / innerWidth) - .5) * 2;
+      pointer.targetY = ((event.clientY / innerHeight) - .5) * 2;
+    }, { passive: true });
+
+    const updatePortalScene = () => {
+      if (!portalJourney || !portalWorld || !portalFrame || !curtainLeft || !curtainRight) return;
+      const maxScroll = Math.max(1, portalJourney.offsetHeight - innerHeight);
+      const rect = portalJourney.getBoundingClientRect();
+      portalScroll.target = clamp(-rect.top / maxScroll, 0, 1);
+      portalScroll.current = reduceMotion
+        ? portalScroll.target
+        : lerp(portalScroll.current, portalScroll.target, .105);
+      if (Math.abs(portalScroll.current - portalScroll.target) < .0008) {
+        portalScroll.current = portalScroll.target;
+      }
+      const progress = portalScroll.current;
+      const eased = easeInOut(progress);
+
+      pointer.x = lerp(pointer.x, pointer.targetX, .07);
+      pointer.y = lerp(pointer.y, pointer.targetY, .07);
+
+      const rx = reduceMotion ? 0 : pointer.x;
+      const ry = reduceMotion ? 0 : pointer.y;
+      const worldScale = lerp(1, 1.18, progress);
+      const portalScale = lerp(1, 7.5, progress);
+      const portalOpacity = clamp(1 - (progress - .65) / .2, 0, 1);
+      const logoTravel = clamp((progress - .04) / .52, 0, 1);
+      const logoScale = lerp(.68, 3.35, easeInOut(logoTravel));
+      const logoOpacity = clamp((1 - (progress - .52) / .18), 0, .66) * clamp((progress + .08) / .16, 0, 1);
+      const curtainShift = 62 + eased * 88;
+      const curtainScale = lerp(1, 1.3, eased);
+      const heroOpacity = clamp(1 - progress / .22, 0, 1);
+      const ctaOpacity = clamp((progress - .68) / .16, 0, 1);
+
+      portalJourney.style.setProperty("--hero-opacity", heroOpacity.toFixed(3));
+      portalJourney.style.setProperty("--cta-opacity", ctaOpacity.toFixed(3));
+      portalJourney.style.setProperty("--logo-opacity", logoOpacity.toFixed(3));
+      portalJourney.style.setProperty("--logo-scale", logoScale.toFixed(4));
+      portalWorld.style.transform = `scale(${worldScale.toFixed(4)}) translate3d(${(rx * 6).toFixed(2)}px, ${(ry * 6).toFixed(2)}px, 0)`;
+      portalFrame.style.opacity = portalOpacity.toFixed(3);
+      portalFrame.style.transform = `scale(${portalScale.toFixed(4)}) translate3d(${(rx * 7).toFixed(2)}px, ${(ry * 7).toFixed(2)}px, 0)`;
+      if (portalEmblem) {
+        portalEmblem.style.transform = `translate3d(calc(-50% + ${(rx * 5).toFixed(2)}px), calc(-50% + ${(ry * 5).toFixed(2)}px), 0) scale(${logoScale.toFixed(4)})`;
+      }
+      curtainLeft.style.transform = `translateX(calc(-${curtainShift.toFixed(2)}% + ${(rx * 14).toFixed(2)}px)) translateY(${(ry * 4.2).toFixed(2)}px) scale(${curtainScale.toFixed(4)}) translateZ(0)`;
+      curtainRight.style.transform = `translateX(calc(${curtainShift.toFixed(2)}% + ${(rx * 14).toFixed(2)}px)) translateY(${(ry * 4.2).toFixed(2)}px) scale(${curtainScale.toFixed(4)}) translateZ(0)`;
+      portalFinal?.classList.toggle("is-visible", ctaOpacity > .15);
+    };
+
+    const portalTick = () => {
+      updatePortalScene();
+      requestAnimationFrame(portalTick);
+    };
+    requestAnimationFrame(portalTick);
+
+    const backgroundVideos = [...document.querySelectorAll("[data-bg-video]")];
+    const backgroundSections = [...document.querySelectorAll("[data-bg]")];
+    let activeBackground = "hero";
+
+    const setActiveBackground = (name) => {
+      if (!name || name === activeBackground) return;
+      activeBackground = name;
+      backgroundVideos.forEach((video) => {
+        const isActive = video.dataset.bgVideo === name;
+        video.classList.toggle("is-active", isActive);
+        if (isActive) {
+          video.play().catch(() => {});
+        }
+      });
+    };
+
+    backgroundVideos.forEach((video) => {
+      video.play().catch(() => {});
+    });
+
+    const bgObserver = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveBackground(visible.target.dataset.bg);
+    }, { threshold: [.28, .48, .68], rootMargin: "-18% 0px -32% 0px" });
+
+    backgroundSections.forEach((section) => bgObserver.observe(section));
+
+    const typeTarget = document.querySelector("#typewriter");
+    const typeCursor = document.querySelector("#typeCursor");
+    const typeText = "พื้นฐานสีน้ำ\nWatercolor Basics";
+    if (typeTarget && typeCursor && !reduceMotion) {
+      typeTarget.textContent = "";
+      let index = 0;
+      setTimeout(() => {
+        const typing = setInterval(() => {
+          index += 1;
+          typeTarget.textContent = typeText.slice(0, index);
+          if (index >= typeText.length) {
+            clearInterval(typing);
+            typeCursor.style.display = "none";
+          }
+        }, 42);
+      }, 460);
+    }
+
+    const heroGame = document.querySelector("#hero .hero-side");
+    const gameMount = document.querySelector("#gameMount");
+    if (heroGame && gameMount) {
+      gameMount.append(heroGame);
+      heroGame.classList.remove("reveal");
+    }
+
+    const miniTarget = document.querySelector("#miniTarget");
+    const miniTargetLabel = document.querySelector("#miniTargetLabel");
+    const miniResult = document.querySelector("#miniResult");
+    const miniAccuracy = document.querySelector("#miniAccuracy");
+    const miniStatus = document.querySelector("#miniMixStatus");
+    const miniCheck = document.querySelector("#miniCheckMix");
+    const miniViewTarget = document.querySelector("#miniViewTarget");
+    const miniReset = document.querySelector("#miniResetMix");
+    const miniSwatches = document.querySelector("#miniSwatches");
+    const miniSliders = document.querySelector("#miniSliders");
+    const miniResultBox = document.querySelector("#miniResultBox");
+    const miniMeter = document.querySelector("#miniMeter");
+    const miniTeamA = document.querySelector("#miniTeamA");
+    const miniTeamB = document.querySelector("#miniTeamB");
+    const miniTurnA = document.querySelector("#miniTurnA");
+    const miniTurnB = document.querySelector("#miniTurnB");
+    const miniRound = document.querySelector("#miniRound");
+    const miniCurrentTeam = document.querySelector("#miniCurrentTeam");
+    const miniTeamACard = document.querySelector("#miniTeamACard");
+    const miniTeamBCard = document.querySelector("#miniTeamBCard");
+    const miniMemoryModal = document.querySelector("#miniMemoryModal");
+    const miniMemoryTarget = document.querySelector("#miniMemoryTarget");
+    const miniTimer = document.querySelector("#miniTimer");
+    const miniWinnerToast = document.querySelector("#miniWinnerToast");
+    const miniWinnerTitle = document.querySelector("#miniWinnerTitle");
+    const miniWinnerDetail = document.querySelector("#miniWinnerDetail");
+
+    const miniBaseColors = {
+      red: { name: "แดง", rgb: [238, 55, 72], css: "#ee3748", text: "#fff" },
+      yellow: { name: "เหลือง", rgb: [250, 204, 21], css: "#facc15", text: "#111" },
+      blue: { name: "น้ำเงิน", rgb: [37, 99, 235], css: "#2563eb", text: "#fff" },
+      white: { name: "ขาว", rgb: [248, 250, 252], css: "#f8fafc", text: "#111" },
+      black: { name: "ดำ", rgb: [17, 24, 39], css: "#111827", text: "#fff" }
+    };
+
+    const miniState = {
+      round: 1,
+      maxRounds: 8,
+      team: "A",
+      scores: { A: 0, B: 0 },
+      turns: { A: 0, B: 0 },
+      target: [126, 160, 182],
+      mixed: null,
+      selected: {},
+      canPlay: false,
+      memorizing: false,
+      timer: 10,
+      timerId: null
+    };
+
+    const rgb = (color) => `rgb(${color.map((n) => Math.round(n)).join(", ")})`;
+    const colorDistance = (a, b) => Math.sqrt(a.reduce((sum, value, index) => sum + (value - b[index]) ** 2, 0));
+    const scoreFromColors = (target, mixed) => Math.max(0, Math.round(100 - (colorDistance(target, mixed) / 441.67) * 100));
+    const scoreMessage = (score) => {
+      if (score >= 92) return "ใกล้มาก เห็น value และโทนสีแม่นมาก";
+      if (score >= 78) return "ดีมาก สีรวมใกล้เป้าหมายแล้ว";
+      if (score >= 58) return "เริ่มถูกทาง ลองปรับน้ำหนักสีที่เด่นกว่านี้";
+      if (score >= 35) return "ยังห่างอยู่ สังเกตว่าสีเป้าหมายอุ่น เย็น สว่าง หรือมืด";
+      return "คนละโทนเลย ลองเริ่มจากแม่สีหลักแล้วค่อยเติมสีที่สอง";
+    };
+
+    const randomMiniTarget = () => {
+      const keys = Object.keys(miniBaseColors).sort(() => Math.random() - .5).slice(0, Math.random() > .45 ? 3 : 2);
+      const weights = keys.map(() => 15 + Math.random() * 85);
+      const total = weights.reduce((sum, value) => sum + value, 0);
+      const mixed = [0, 0, 0];
+      keys.forEach((key, index) => {
+        const weight = weights[index] / total;
+        miniBaseColors[key].rgb.forEach((value, channel) => {
+          mixed[channel] += value * weight;
+        });
+      });
+      return mixed.map((value) => clamp(Math.round(value + Math.random() * 18 - 9), 0, 255));
+    };
+
+    const calculateMiniMix = () => {
+      const keys = Object.keys(miniState.selected);
+      if (!keys.length) return null;
+      const total = keys.reduce((sum, key) => sum + miniState.selected[key], 0);
+      const mixed = [0, 0, 0];
+      keys.forEach((key) => {
+        const weight = miniState.selected[key] / total;
+        miniBaseColors[key].rgb.forEach((value, channel) => {
+          mixed[channel] += value * weight;
+        });
+      });
+      return mixed.map((value) => Math.round(value));
+    };
+
+    const updateMiniHeader = () => {
+      if (miniTeamA) miniTeamA.textContent = miniState.scores.A;
+      if (miniTeamB) miniTeamB.textContent = miniState.scores.B;
+      if (miniTurnA) miniTurnA.textContent = `${miniState.turns.A} / 4 ตา`;
+      if (miniTurnB) miniTurnB.textContent = `${miniState.turns.B} / 4 ตา`;
+      if (miniRound) miniRound.textContent = `${miniState.round} / ${miniState.maxRounds}`;
+      if (miniCurrentTeam) miniCurrentTeam.textContent = `ตาทีม ${miniState.team}`;
+      miniTeamACard?.classList.toggle("is-active", miniState.team === "A");
+      miniTeamBCard?.classList.toggle("is-active", miniState.team === "B");
+    };
+
+    const updateMiniButtons = () => {
+      const selectedCount = Object.keys(miniState.selected).length;
+      if (miniViewTarget) miniViewTarget.disabled = miniState.canPlay || miniState.memorizing || miniState.round > miniState.maxRounds;
+      if (miniCheck) miniCheck.disabled = !miniState.canPlay || selectedCount < 2 || selectedCount > 3 || !miniState.mixed;
+    };
+
+    const renderMiniSwatches = () => {
+      if (!miniSwatches) return;
+      miniSwatches.innerHTML = "";
+      Object.entries(miniBaseColors).forEach(([key, color]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "mix-color-choice";
+        button.textContent = color.name;
+        button.style.setProperty("--choice", color.css);
+        button.style.setProperty("--choice-text", color.text);
+        button.classList.toggle("is-selected", Boolean(miniState.selected[key]));
+        button.addEventListener("click", () => toggleMiniColor(key));
+        miniSwatches.append(button);
+      });
+    };
+
+    const renderMiniSliders = () => {
+      if (!miniSliders) return;
+      miniSliders.innerHTML = "";
+      Object.keys(miniState.selected).forEach((key) => {
+        const color = miniBaseColors[key];
+        const row = document.createElement("div");
+        row.className = "mix-slider-row";
+        row.innerHTML = `<span>${color.name}</span><input type="range" min="1" max="100" value="${miniState.selected[key]}"><strong>${miniState.selected[key]}</strong>`;
+        const input = row.querySelector("input");
+        const amount = row.querySelector("strong");
+        input.addEventListener("input", () => {
+          miniState.selected[key] = Number(input.value);
+          amount.textContent = input.value;
+          updateMiniMix();
+        });
+        miniSliders.append(row);
+      });
+    };
+
+    const updateMiniMix = () => {
+      miniState.mixed = calculateMiniMix();
+      if (miniState.mixed) {
+        miniResult?.style.setProperty("--swatch", rgb(miniState.mixed));
+        if (miniAccuracy) miniAccuracy.textContent = Object.keys(miniState.selected).length >= 2 ? "พร้อมตรวจ" : "เลือกอีก 1 สี";
+      } else {
+        miniResult?.style.setProperty("--swatch", "#7d8ea0");
+        if (miniAccuracy) miniAccuracy.textContent = "ยังไม่ได้เลือกสี";
+      }
+      updateMiniButtons();
+    };
+
+    const toggleMiniColor = (key) => {
+      if (!miniState.canPlay) {
+        if (miniResultBox) miniResultBox.firstElementChild.textContent = "ต้องกดแสดงสี 10 วิ ก่อน แล้วค่อยเริ่มผสม";
+        return;
+      }
+      if (miniState.selected[key]) {
+        delete miniState.selected[key];
+      } else if (Object.keys(miniState.selected).length < 3) {
+        miniState.selected[key] = 50;
+      } else if (miniResultBox) {
+        miniResultBox.firstElementChild.textContent = "เลือกได้สูงสุด 3 สีเท่านั้น";
+      }
+      renderMiniSwatches();
+      renderMiniSliders();
+      updateMiniMix();
+    };
+
+    const startMiniRound = () => {
+      clearInterval(miniState.timerId);
+      miniState.target = randomMiniTarget();
+      miniState.mixed = null;
+      miniState.selected = {};
+      miniState.canPlay = false;
+      miniState.memorizing = false;
+      miniState.timer = 10;
+      miniTarget?.classList.add("is-hidden");
+      if (miniTarget) {
+        miniTarget.textContent = "HIDDEN";
+        miniTarget.style.setProperty("--swatch", rgb(miniState.target));
+      }
+      if (miniTargetLabel) miniTargetLabel.textContent = "กดดูสี 10 วิ";
+      if (miniResultBox) miniResultBox.innerHTML = `<span>กด “แสดงสี 10 วิ” เพื่อจำสีเป้าหมาย แล้วเลือกสี 2-3 สีเพื่อผสมให้ใกล้ที่สุด</span><div class="mix-meter"><span id="miniMeter"></span></div>`;
+      renderMiniSwatches();
+      renderMiniSliders();
+      updateMiniHeader();
+      updateMiniMix();
+    };
+
+    const showMiniTarget = () => {
+      if (miniState.canPlay || miniState.memorizing) return;
+      miniState.memorizing = true;
+      miniState.timer = 10;
+      if (miniMemoryTarget) miniMemoryTarget.style.setProperty("--memory-swatch", rgb(miniState.target));
+      if (miniTimer) miniTimer.textContent = miniState.timer;
+      miniMemoryModal?.classList.add("is-open");
+      miniMemoryModal?.setAttribute("aria-hidden", "false");
+      updateMiniButtons();
+      miniState.timerId = setInterval(() => {
+        miniState.timer -= 1;
+        if (miniTimer) miniTimer.textContent = miniState.timer;
+        if (miniState.timer <= 0) {
+          clearInterval(miniState.timerId);
+          miniMemoryModal?.classList.remove("is-open");
+          miniMemoryModal?.setAttribute("aria-hidden", "true");
+          miniState.memorizing = false;
+          miniState.canPlay = true;
+          if (miniStatus) miniStatus.textContent = `ทีม ${miniState.team} เริ่มผสมได้ เลือกสี 2-3 สีแล้วปรับน้ำหนักแต่ละสี`;
+          if (miniTargetLabel) miniTargetLabel.textContent = "ซ่อนแล้ว";
+          updateMiniButtons();
+        }
+      }, 1000);
+    };
+
+    const launchMiniConfetti = () => {
+      const colors = ["#c7ddff", "#ffe48a", "#87f2c3", "#f0a6c1"];
+      for (let i = 0; i < 46; i += 1) {
+        const piece = document.createElement("span");
+        piece.className = "mix-confetti";
+        piece.style.left = `${Math.random() * 100}vw`;
+        piece.style.animationDuration = `${1 + Math.random() * 1.2}s`;
+        piece.style.setProperty("--confetti", colors[Math.floor(Math.random() * colors.length)]);
+        document.body.append(piece);
+        setTimeout(() => piece.remove(), 2300);
+      }
+    };
+
+    const endMiniGame = () => {
+      const a = miniState.scores.A;
+      const b = miniState.scores.B;
+      const title = a === b ? "เสมอกัน" : `${a > b ? "Team A" : "Team B"} ชนะ`;
+      if (miniWinnerTitle) miniWinnerTitle.textContent = title;
+      if (miniWinnerDetail) miniWinnerDetail.textContent = `Team A ${a} คะแนน, Team B ${b} คะแนน`;
+      miniWinnerToast?.classList.add("is-open");
+      launchMiniConfetti();
+    };
+
+    const checkMiniScore = () => {
+      if (!miniState.canPlay || !miniState.mixed) return;
+      const score = scoreFromColors(miniState.target, miniState.mixed);
+      miniState.scores[miniState.team] += score;
+      miniState.turns[miniState.team] += 1;
+      miniState.canPlay = false;
+      miniTarget?.classList.remove("is-hidden");
+      if (miniTarget) miniTarget.textContent = "";
+      if (miniTargetLabel) miniTargetLabel.textContent = "เฉลยสีเป้าหมาย";
+      if (miniAccuracy) miniAccuracy.textContent = `${score} pts`;
+      if (miniResultBox) {
+        miniResultBox.innerHTML = `<span><strong>${score} คะแนน</strong> ${scoreMessage(score)}</span><div class="mix-meter"><span style="--score:${score}%"></span></div>`;
+      }
+      if (score >= 90) launchMiniConfetti();
+      updateMiniHeader();
+      updateMiniButtons();
+      setTimeout(() => {
+        if (miniState.round >= miniState.maxRounds) {
+          endMiniGame();
+          return;
+        }
+        miniState.round += 1;
+        miniState.team = miniState.team === "A" ? "B" : "A";
+        startMiniRound();
+      }, 2600);
+    };
+
+    const resetMiniGame = () => {
+      clearInterval(miniState.timerId);
+      Object.assign(miniState, {
+        round: 1,
+        team: "A",
+        scores: { A: 0, B: 0 },
+        turns: { A: 0, B: 0 },
+        selected: {},
+        canPlay: false,
+        memorizing: false,
+        timer: 10
+      });
+      miniWinnerToast?.classList.remove("is-open");
+      miniMemoryModal?.classList.remove("is-open");
+      if (miniStatus) miniStatus.textContent = "จำสีเป้าหมาย แล้วผสมให้ใกล้ที่สุด ทีมละ 4 ตา รวม 8 รอบ";
+      startMiniRound();
+    };
+
+    miniViewTarget?.addEventListener("click", showMiniTarget);
+    miniCheck?.addEventListener("click", checkMiniScore);
+    miniReset?.addEventListener("click", resetMiniGame);
+    resetMiniGame();
+
+    const reveals = document.querySelectorAll(".reveal");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .18, rootMargin: "0px 0px -80px" });
+
+    reveals.forEach((element) => {
+      if (reduceMotion) {
+        element.classList.add("is-visible");
+      } else {
+        observer.observe(element);
+      }
+    });
+  </script>
+</body>
+</html>
